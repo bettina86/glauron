@@ -4,16 +4,25 @@ var H = 800;
 var G = .05;
 var FLAP_SPEED = 4;
 var FLAP_TIME = 10;
-var FLAP_INTERVAL = 40;
+var FLAP_INTERVAL = 30;
 var FIRE_INTERVAL = 60;
 var GROUND_Y = 650;
+var ARCHER_WIDTH = 10;
+var ARCHER_HEIGHT = 30;
+var ARROW_SPEED = 5;
 
 Crafty.init(W, H, document.getElementById('game'));
 Crafty.timer.FPS(60);
 
+Crafty.c('Dragon', {
+  init: function() {
+    this.dragon = null;
+  },
+});
+
 Crafty.c('Tail', {
   init: function() {
-    this.requires('2D, Canvas, Color');
+    this.requires('2D, Canvas, Color, Dragon');
     this.bind('EnterFrame', function() {
       if (!this.dragon) return;
 
@@ -36,13 +45,14 @@ Crafty.c('Tail', {
   },
 });
 
-Crafty.c('Dragon', {
+Crafty.c('DragonCore', {
   init: function() {
-    this.requires('2D, Canvas, Color, Collision');
+    this.requires('2D, Canvas, Color, Collision, Dragon');
     this.vx = 3;
     this.vy = 0;
     this.flapDelay = 0;
     this.fireDelay = 0;
+    this.dragon = this;
     this.trail = [];
 
     this
@@ -106,6 +116,10 @@ Crafty.c('Dragon', {
     return this;
   },
 
+  takeDamage: function(damage) {
+    this.die();
+  },
+
   die: function() {
     this.destroy();
     Crafty.e('Delay').delay(function() {
@@ -126,9 +140,89 @@ Crafty.c('Ground', {
   },
 });
 
+Crafty.c('Archer', {
+  init: function() {
+    this.requires('2D, Canvas, Color');
+    this
+      .attr({w: ARCHER_WIDTH, h: ARCHER_HEIGHT})
+      .color('#dddddd');
+
+    var cooldown = 0;
+
+    this.bind('EnterFrame', function() {
+      if (cooldown > 0) {
+        cooldown--;
+      } else {
+        if (Math.random() < 0.01) {
+          var dragon = Crafty('DragonCore');
+          var vx = dragon.x - this.x;
+          var vy = dragon.y - this.y;
+          var f = ARROW_SPEED / length(vx, vy);
+          vx *= f;
+          vy *= f;
+          Crafty.e('Arrow, Despawn')
+            .attr({x: this.x, y: this.y})
+            .fire(vx, vy);
+          cooldown = 60;
+        }
+      }
+    });
+  },
+});
+
+Crafty.c('Arrow', {
+  init: function() {
+    this.requires('2D, Canvas, Color, Collision');
+    this
+      .attr({w: 30, h: 4})
+      .color('#ffffff');
+
+    this.vx = 0;
+    this.vy = 0;
+
+    this.bind('EnterFrame', function() {
+      this.x += this.vx;
+      this.y += this.vy;
+    });
+
+    this.onHit('Dragon', function(e) {
+      var dragon = e[0].obj.dragon;
+      if (!dragon) return;
+      dragon.takeDamage(10);
+    });
+  },
+
+  fire: function(vx, vy) {
+    this.vx = vx;
+    this.vy = vy;
+    this.rotation = radToDeg(Math.atan2(this.vy, this.vx));
+  },
+});
+
 Crafty.c('Spawner', {
   init: function() {
+    var cooldown = 0;
+    this.bind('EnterFrame', function() {
+      if (cooldown > 0) {
+        cooldown--;
+      } else {
+        if (Math.random() < 0.005) {
+          Crafty.e('Archer, Despawn')
+            .attr({x: -Crafty.viewport.x + W, y: GROUND_Y - ARCHER_HEIGHT});
+          cooldown = 60;
+        }
+      }
+    });
+  },
+});
 
+Crafty.c('Despawn', {
+  init: function() {
+    this.bind('EnterFrame', function() {
+      if (this.x + this.w < -Crafty.viewport.x) {
+        this.destroy();
+      }
+    });
   },
 });
 
@@ -150,7 +244,7 @@ Crafty.c('Input', {
       } else if (e.key == Crafty.keys.SPACE) {
         this.fire();
       }
-    };
+    }.bind(this);
 
     var mouseHandler = function mouseHandler(e) {
       if (e.button == 0) {
@@ -173,11 +267,13 @@ Crafty.c('Input', {
 Crafty.defineScene('game', function() {
   Crafty('*').destroy();
 
-  var dragon = Crafty.e('Dragon, Input, FollowedByCamera')
+  var dragon = Crafty.e('DragonCore, Input, FollowedByCamera')
     .attr({x: 100, y: 100})
     .color('#ffffff');
 
   Crafty.e('Ground');
+
+  Crafty.e('Spawner');
 });
 
 Crafty.enterScene('game');
