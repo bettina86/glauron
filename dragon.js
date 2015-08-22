@@ -6,7 +6,8 @@ Crafty.c('Dragon', {
 
 Crafty.c('Tail', {
   init: function() {
-    this.requires('2D, Canvas, Color, Dragon');
+    this.requires('2D, Canvas, Color, Collision, Dragon');
+
     this.bind('EnterFrame', function() {
       if (!this.dragon) return;
 
@@ -81,6 +82,8 @@ Crafty.c('DragonCore', {
     });
 
     this.onHit('Ground', function() {
+      this.vx = 0;
+      this.vy = 0;
       this.die();
     });
 
@@ -104,6 +107,7 @@ Crafty.c('DragonCore', {
   },
 
   flap: function() {
+    if (this.isDead()) return;
     if (this.y < 0) return;
     if (this.flapCooldown > 0) return;
     this.flapTime = FLAP_TIME;
@@ -112,7 +116,12 @@ Crafty.c('DragonCore', {
   },
 
   fire: function(firing) {
+    if (this.isDead()) return;
     this.firing = firing;
+  },
+
+  isDead: function() {
+    return this.health <= 0;
   },
 
   takeDamage: function(damage) {
@@ -125,10 +134,10 @@ Crafty.c('DragonCore', {
 
   die: function() {
     this.health = 0;
-    this.destroy();
+    this.firing = false;
     Crafty.e('Delay').delay(function() {
       Crafty.enterScene('game');
-    }, 1000);
+    }, 3000);
   },
 });
 
