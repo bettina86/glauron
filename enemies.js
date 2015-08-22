@@ -14,14 +14,13 @@ Crafty.c('Archer', {
         if (Math.random() < 0.01) {
           var dragon = Crafty('DragonCore');
           if (dragon.length > 0 && !dragon.isDead()) {
-            var vx = dragon.x - this.x;
-            var vy = dragon.y - this.y;
-            var f = ARROW_SPEED / length(vx, vy);
-            vx *= f;
-            vy *= f;
+            var dx = dragon.x - this.x;
+            var dy = dragon.y - this.y;
+            var d = length(dx, dy);
+            var distanceAdjustment = 0.02 * d;
             Crafty.e('Arrow, Despawn')
               .attr({x: this.x, y: this.y})
-              .fire(vx, vy);
+              .fire(atan2(dy, dx) + distanceAdjustment);
             cooldown = 60;
           }
         }
@@ -41,6 +40,11 @@ Crafty.c('Arrow', {
       .color('#ff0000');
     this.attach(this.sprite);
 
+    this.bind('EnterFrame', function() {
+      this.vy += ARROW_G;
+      this.rotation = atan2(-this.vy, -this.vx);
+    });
+
     this.onHit('Dragon', function(e) {
       for (var i = 0; i < e.length; i++) {
         var item = e[i];
@@ -53,12 +57,17 @@ Crafty.c('Arrow', {
         break;
       }
     });
+
+    this.onHit('Ground', function(e) {
+      e[0].obj.attach(this.sprite);
+      this.destroy();
+    });
   },
 
-  fire: function(vx, vy) {
-    this.vx = vx;
-    this.vy = vy;
-    this.rotation = atan2(-this.vy, -this.vx);
+  fire: function(direction) {
+    this.vx = cos(direction) * ARROW_SPEED;
+    this.vy = sin(direction) * ARROW_SPEED;
+    this.rotation = direction;
   },
 });
 

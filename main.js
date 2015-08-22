@@ -85,7 +85,7 @@ Crafty.defineScene('game', function() {
     .attr({x: 100, y: 100})
     .color('#ffffff');
 
-  Crafty.e('Ground');
+  Crafty.e('GroundManager');
 
   Crafty.e('Spawner');
 
