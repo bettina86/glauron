@@ -15,34 +15,39 @@ Crafty.c('DragonCore', {
     this.dragon = this;
     this.health = 100;
 
-    var pivots = [
-      [12, 24],
-      [12, 24],
-      [12, 24],
-      [16, 26],
-      [12, 26],
-      [16, 28],
-      [10, 24],
-      [10, 26],
-      [14, 28],
-      [10, 26],
-      [10, 26],
-      [10, 26],
-      [10, 24],
-      [10, 30],
+    var data = [
+      [0, 12, 23, 27],
+      [12, 24, 24, 26],
+      [12, 24, 24, 26],
+      [16, 26, 23, 27],
+      [12, 26, 23, 27],
+      [16, 28, 22, 28],
+      [10, 24, 22, 28],
+      [10, 26, 21, 30],
+      [14, 28, 18, 36],
+      [10, 26, 17, 33],
+      [10, 26, 20, 31],
+      [10, 26, 20, 30],
+      [10, 24, 21, 29],
+      [10, 36, 19, 32],
     ];
     var d = 0;
     var dragon = this;
     this.tail = [];
-    for (var i = 0; i < pivots.length; i++) {
-      var p = pivots[pivots.length - 1 - i];
+    for (var i = 0; i < data.length; i++) {
+      var p = data[data.length - 1 - i];
+      var left = p[0];
+      var right = p[1];
+      var top = p[2];
+      var bottom = p[3];
       var piece = Crafty.e('2D, Canvas, dragon_start, Collision, Dragon')
-        .sprite(pivots.length - 1 - i, 0)
-        .origin(p[0], 25);
+        .sprite(data.length - 1 - i, 0)
+        .origin(left, 25)
+        .collision([top, left], [top, right], [bottom, right], [bottom, left]);
       piece.dragon = this;
-      piece.leftPivot = p[0];
-      piece.rightPivot = p[1];
-      piece.pieceLength = p[1] - p[0];
+      piece.leftPivot = left;
+      piece.rightPivot = right;
+      piece.pieceLength = right - left;
       piece.onHit('Ground', function() {
         dragon.takeDamage(10000);
         this.unbind('EnterFrame');

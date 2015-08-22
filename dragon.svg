@@ -28,9 +28,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.3375"
-     inkscape:cx="305.7934"
-     inkscape:cy="-2.7586593"
+     inkscape:zoom="26.445794"
+     inkscape:cx="20.335157"
+     inkscape:cy="19.553138"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -1131,13 +1131,13 @@
        style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.50196078" />
     <path
        style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.50196078"
-       d="m 29.40626,1024.7645 c 0,0 -9.10338,1.7121 -17.2793,2.5644 0.14685,0.01 0.32149,0.026 0.47266,0.033 -0.1131,0.01 -0.21892,0.011 -0.33203,0.018 0.96565,0.063 1.86943,0.1144 2.82812,0.1758 6.50507,0.6889 14.75195,2.6582 14.75195,2.6582 0,0 -3.61195,-1.1703 -5.79687,-2.1035 0.0311,0 0.0569,0 0.0879,0.01 l -0.11523,-0.2461 -0.0352,-1.0195 0.11914,-0.09 c -0.0361,0 -0.0713,0 -0.10742,0.01 2.25851,-0.9906 5.40625,-2.0019 5.40625,-2.0019 z"
+       d="m 17.406259,1024.7645 c 0,0 -9.1033795,1.7121 -17.27929948,2.5644 0.14685,0.01 0.32148997,0.026 0.47265997,0.033 -0.1131,0.01 -0.21891997,0.011 -0.33202997,0.018 0.96564998,0.063 1.86942998,0.1144 2.82811998,0.1758 6.5050696,0.6889 14.7519495,2.6582 14.7519495,2.6582 0,0 -3.61195,-1.1703 -5.79687,-2.1035 0.0311,0 0.0569,0 0.0879,0.01 l -0.11523,-0.2461 -0.0352,-1.0195 0.11914,-0.09 c -0.0361,0 -0.0713,0 -0.10742,0.01 2.25851,-0.9906 5.40625,-2.0019 5.40625,-2.0019 z"
        id="path5485"
        inkscape:connector-curvature="0" />
     <circle
        r="0.60221243"
        cy="1027.3621"
-       cx="24"
+       cx="12"
        id="circle5490"
        style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.50196078" />
   </g>
