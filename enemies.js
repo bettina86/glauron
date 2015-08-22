@@ -26,6 +26,10 @@ Crafty.c('Archer', {
         }
       }
     });
+
+    this.bind('Burn', function() {
+      Crafty('Stats').archersKilled++;
+    });
   },
 });
 
@@ -61,6 +65,10 @@ Crafty.c('Arrow', {
     this.onHit('Ground', function(e) {
       e[0].obj.attach(this.sprite);
       this.destroy();
+    });
+
+    this.bind('Burn', function() {
+      Crafty('Stats').arrowsDestroyed++;
     });
   },
 

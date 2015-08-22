@@ -32,11 +32,12 @@ Crafty.c('House', {
       .attr({w: HOUSE_WIDTH, h: HOUSE_HEIGHT})
       .color('#dddddd');
 
-    this.bind('Remove', function() {
+    this.bind('Burn', function() {
       if (Math.random() < HEART_SPAWN_PROB) {
         Crafty.e('Heart')
           .attr({x: this.x + this.w/2, y: this.y + this.h/2});
       }
+      Crafty('Stats').housesDestroyed++;
     });
   },
 });

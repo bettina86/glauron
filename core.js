@@ -62,3 +62,22 @@ Crafty.c('FollowedByCamera', {
     });
   },
 });
+
+Crafty.c('StaticDom', {
+  bindElementVisibility: function(id) {
+    this.element = document.getElementById(id);
+    this.element.style.display = 'block';
+
+    this.bind('Remove', function() {
+      this.element.style.display = 'none';
+    });
+
+    return this;
+  },
+
+  setElementContent: function(id, content) {
+    var element = document.getElementById(id);
+    element.innerText = content;
+    return this;
+  },
+});

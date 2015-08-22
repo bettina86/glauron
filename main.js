@@ -57,14 +57,35 @@ Crafty.c('Input', {
 
     Crafty.bind('KeyDown', keyDownHandler);
     Crafty.bind('KeyUp', keyUpHandler);
-    document.onmousedown = mouseDownHandler;
-    document.onmouseup = mouseUpHandler;
+    document.addEventListener('mousedown', mouseDownHandler);
+    document.addEventListener('mouseup', mouseUpHandler);
 
     this.bind('Remove', function() {
       Crafty.unbind('KeyDown', keyDownHandler);
       Crafty.unbind('KeyUp', keyUpHandler);
-      document.onmousedown = null;
+      document.removeEventListener('mousedown', mouseDownHandler);
+      document.removeEventListener('mouseup', mouseUpHandler);
     });
+  },
+});
+
+Crafty.c('Stats', {
+  init: function() {
+    this.archersKilled = 0;
+    this.arrowsDestroyed = 0;
+    this.housesDestroyed = 0;
+    this.heartsCollected = 0;
+    this.distanceFlown = 0;
+  },
+
+  archersKilledScore: function() { return this.archersKilled * 10; },
+
+  arrowsDestroyedScore: function() { return this.arrowsDestroyed * 2; },
+
+  housesDestroyedScore: function() { return this.housesDestroyed * 5; },
+
+  score: function() {
+    return this.archersKilledScore() + this.arrowsDestroyedScore() + this.housesDestroyedScore();
   },
 });
 
@@ -85,9 +106,19 @@ Crafty.defineScene('game', function() {
 
   Crafty.background('#111111');
 
+  Crafty.e('Stats');
+
   var dragon = Crafty.e('DragonCore, Input, FollowedByCamera')
     .attr({x: 100, y: 100})
     .color('#ffffff');
+  dragon.bind('Die', function() {
+    Crafty.e('Delay').delay(function() {
+      Crafty.e('GameOver, AnyKey')
+        .bind('AnyKey', function() {
+          Crafty.enterScene('game');
+        });
+    }, 1000);
+  });
 
   Crafty.e('GroundManager');
 
@@ -96,6 +127,41 @@ Crafty.defineScene('game', function() {
   Crafty.e('Hud')
     .attach(Crafty.e('HealthBar').attr({x: 5, y: 5}))
     .attach(Crafty.e('FireBar').attr({x: W - FIRE_AMOUNT - 5, y: 10}));
+});
+
+Crafty.c('GameOver', {
+  init: function() {
+    this.requires('StaticDom');
+
+    var stats = Crafty('Stats');
+    this
+      .bindElementVisibility('game-over')
+      .setElementContent('archers-killed', stats.archersKilled)
+      .setElementContent('archers-killed-score', stats.archersKilledScore())
+      .setElementContent('arrows-destroyed', stats.arrowsDestroyed)
+      .setElementContent('arrows-destroyed-score', stats.arrowsDestroyedScore())
+      .setElementContent('houses-destroyed', stats.housesDestroyed)
+      .setElementContent('houses-destroyed-score', stats.housesDestroyedScore())
+      .setElementContent('distance-flown', stats.distanceFlown)
+      .setElementContent('score', stats.score());
+  },
+});
+
+Crafty.c('AnyKey', {
+  init: function() {
+    var handler = function(e) {
+      this.trigger('AnyKey');
+      e.preventDefault();
+    }.bind(this);
+
+    Crafty.bind('KeyDown', handler);
+    document.addEventListener('mousedown', handler);
+    
+    this.bind('Remove', function() {
+      Crafty.unbind('KeyDown', handler);
+      document.removeEventListener('mousedown', handler);
+    });
+  },
 });
 
 Crafty.enterScene('loading');

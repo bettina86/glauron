@@ -7,6 +7,9 @@
         font-family: "EG Dragon Caps";
         src: url(EG_Dragon_Caps.ttf);
       }
+      * {
+        box-sizing: border-box;
+      }
       html {
         background: #000;
         color: #fff;
@@ -29,10 +32,90 @@
       dd {
         margin-left: 320px;
       }
+      #container {
+        position: relative;
+      }
+      .overlay {
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        text-shadow: 0 0 6px #000;
+        text-align: center;
+      }
+      .game-over {
+        text-align: left;
+        display: inline-block;
+        margin: 0 auto;
+      }
+      .right {
+        text-align: right;
+      }
+      h1 {
+        font-weight: normal;
+        font-size: 200%;
+        margin: 100px 0 50px;
+        text-align: center;
+      }
+      table {
+        border-collapse: collapse;
+      }
+      td {
+        padding: 0 10px;
+      }
+      tfoot td {
+        border-top: 1px solid #fff;
+      }
+      .any-key {
+        margin-top: 50px;
+        color: #888;
+      }
     </style>
   </head>
   <body>
-    <div id="game"></div>
+    <div id="container">
+      <div id="game"></div>
+      <div id="game-over" class="overlay" style="display: none">
+        <h1>Glauron was slain!</h1>
+        <div class="game-over">
+          <table>
+            <thead>
+              <tr>
+                <td>
+                <td>
+                <td>Score
+            </thead>
+            <tbody>
+              <tr>
+                <td>Archers toasted</td>
+                <td class="right" id="archers-killed"></td>
+                <td class="right" id="archers-killed-score"></td>
+              <tr>
+                <td>Arrows charred</td>
+                <td class="right" id="arrows-destroyed"></td>
+                <td class="right" id="arrows-destroyed-score"></td>
+              <tr>
+                <td>Houses torched</td>
+                <td class="right" id="houses-destroyed"></td>
+                <td class="right" id="houses-destroyed-score"></td>
+              <tr>
+                <td>Distance flown</td>
+                <td class="right" id="distance-flown"></td>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td>Total</td>
+                <td>
+                <td class="right" id="score"></td>
+            </tfoot>
+          </table>
+        </div>
+        <p class="any-key">
+          Click or press key to restart
+        </p>
+      </div>
+    </div>
     <dl>
       <dt>up / left mouse button</dt>
       <dd>flap wings</dd>

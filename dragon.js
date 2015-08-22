@@ -62,6 +62,8 @@ Crafty.c('DragonCore', {
         this.trail.pop();
       }
 
+      Crafty('Stats').distanceFlown = Math.floor(this.x / 100);
+
       if (this.fireCooldown > 0) {
         this.fireCooldown--;
       }
@@ -76,15 +78,19 @@ Crafty.c('DragonCore', {
           }
         }
       } else {
-        this.fireAmount += FIRE_REPLENISH;
-        if (this.fireAmount > FIRE_AMOUNT) this.fireAmount = FIRE_AMOUNT;
+        if (!this.isDead()) {
+          this.fireAmount += FIRE_REPLENISH;
+          if (this.fireAmount > FIRE_AMOUNT) this.fireAmount = FIRE_AMOUNT;
+        } else {
+          this.fireAmount = Math.max(0, this.fireAmount - 5*FIRE_REPLENISH);
+        }
       }
     });
 
     this.onHit('Ground', function() {
       this.vx = 0;
       this.vy = 0;
-      this.die();
+      this.takeDamage(10000);
     });
 
     for (var i = 1; i < 10; i++) {
@@ -125,24 +131,21 @@ Crafty.c('DragonCore', {
   },
 
   takeDamage: function(damage) {
+    if (this.isDead()) {
+      return;
+    }
     this.health -= damage;
     if (this.health < 0) this.health = 0;
     if (this.health <= 0) {
-      this.die();
+      this.firing = false;
+      this.removeComponent('Input');
+      this.trigger('Die');
     }
   },
 
   heal: function(health) {
     this.health += health;
     if (this.health > 100) this.health = 100;
-  },
-
-  die: function() {
-    this.health = 0;
-    this.firing = false;
-    Crafty.e('Delay').delay(function() {
-      Crafty.enterScene('game');
-    }, 3000);
   },
 });
 
@@ -168,6 +171,7 @@ Crafty.c('Fire', {
 
     this.onHit('Burnable', function(e) {
       e.forEach(function(item) {
+        item.obj.trigger('Burn');
         item.obj.destroy();
       });
     });
