@@ -9,12 +9,14 @@ Crafty.c('Spawner', {
         cooldown--;
       } else {
         if (Math.random() < 0.005) {
-          Crafty.e('Archer, Despawn')
-            .attr({x: -Crafty.viewport.x + W, y: GROUND_Y - ARCHER_HEIGHT});
+          Crafty.e('Archer, SnapToGround, Despawn')
+            .attr({x: -Crafty.viewport.x + W})
+            .snapToGround();
           cooldown = 60;
         } else if (Math.random() < 0.01) {
-          Crafty.e('House, Despawn')
-            .attr({x: -Crafty.viewport.x + W, y: GROUND_Y - HOUSE_HEIGHT});
+          Crafty.e('House, SnapToGround, Despawn')
+            .attr({x: -Crafty.viewport.x + W})
+            .snapToGround();
           cooldown = 60;
         }
       }
@@ -27,15 +29,18 @@ Crafty.c('Input', {
     this.requires('Dragon');
 
     var keyDownHandler = function(e) {
-      if (e.key == Crafty.keys.UP_ARROW) {
+      if (e.keyCode == 38) {
         this.flap();
-      } else if (e.key == Crafty.keys.SPACE) {
+        e.preventDefault();
+      } else if (e.keyCode == 32) {
         this.fire(true);
+        e.preventDefault();
       }
     }.bind(this);
     var keyUpHandler = function(e) {
-      if (e.key == Crafty.keys.SPACE) {
+      if (e.keyCode == 32) {
         this.fire(false);
+        e.preventDefault();
       }
     }.bind(this);
 
@@ -55,14 +60,14 @@ Crafty.c('Input', {
       }
     }.bind(this);
 
-    Crafty.bind('KeyDown', keyDownHandler);
-    Crafty.bind('KeyUp', keyUpHandler);
+    document.addEventListener('keydown', keyDownHandler);
+    document.addEventListener('keyup', keyUpHandler);
     document.addEventListener('mousedown', mouseDownHandler);
     document.addEventListener('mouseup', mouseUpHandler);
 
     this.bind('Remove', function() {
-      Crafty.unbind('KeyDown', keyDownHandler);
-      Crafty.unbind('KeyUp', keyUpHandler);
+      document.removeEventListener('keydown', keyDownHandler);
+      document.removeEventListener('keyup', keyUpHandler);
       document.removeEventListener('mousedown', mouseDownHandler);
       document.removeEventListener('mouseup', mouseUpHandler);
     });
@@ -104,7 +109,7 @@ Crafty.defineScene('loading', function() {
 Crafty.defineScene('game', function() {
   Crafty('*').destroy();
 
-  Crafty.background('#111111');
+  Crafty.background('#333333');
 
   Crafty.e('Stats');
 
@@ -112,6 +117,7 @@ Crafty.defineScene('game', function() {
     .attr({x: 100, y: 100})
     .color('#ffffff');
   dragon.bind('Die', function() {
+    Crafty('Spawner').destroy();
     Crafty.e('Delay').delay(function() {
       Crafty.e('GameOver, AnyKey')
         .bind('AnyKey', function() {
@@ -149,17 +155,24 @@ Crafty.c('GameOver', {
 
 Crafty.c('AnyKey', {
   init: function() {
-    var handler = function(e) {
+    var keyDownHandler = function(e) {
+      if (e.keyCode != 32) return;
       this.trigger('AnyKey');
       e.preventDefault();
     }.bind(this);
 
-    Crafty.bind('KeyDown', handler);
-    document.addEventListener('mousedown', handler);
+    var mouseDownHandler = function(e) {
+      if (e.button != 0) return;
+      this.trigger('AnyKey');
+      e.preventDefault();
+    }.bind(this);
+
+    document.addEventListener('keydown', keyDownHandler);
+    document.addEventListener('mousedown', mouseDownHandler);
     
     this.bind('Remove', function() {
-      Crafty.unbind('KeyDown', handler);
-      document.removeEventListener('mousedown', handler);
+      document.removeEventListener('keydown', keyDownHandler);
+      document.removeEventListener('mousedown', mouseDownHandler);
     });
   },
 });

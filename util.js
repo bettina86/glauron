@@ -25,3 +25,15 @@ function atan2(y, x) {
 function lerp(a, b, f) {
   return (1 - f) * a + f * b;
 }
+
+function clamp(min, max, x) {
+  return x < min ? min : (x > max ? max : x);
+}
+
+function randInt(max) {
+  return Math.floor(max * Math.random());
+}
+
+function randFloat(min, max) {
+  return min + (max - min) * Math.random();
+}

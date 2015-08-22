@@ -9,5 +9,12 @@ var ASSETS = {
         heart_empty: [2, 0],
       },
     },
+    'ground.png': {
+      tile: 200,
+      tileh: 100,
+      map: {
+        ground_start: [0, 0],
+      },
+    },
   },
 };

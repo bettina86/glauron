@@ -1,6 +1,10 @@
 var W = 1200;
 var H = 800;
 
+var SEGMENT_WIDTH = 100;
+var SKIRT_WIDTH = 50;
+var SKIRT_HEIGHT = 50;
+
 var G = .05;
 var FLAP_SPEED = 4;
 var FLAP_TIME = 10;
@@ -8,6 +12,8 @@ var FLAP_INTERVAL = 30;
 var FIRE_INTERVAL = 60;
 
 var GROUND_Y = 650;
+var GROUND_MIN_Y = H / 3;
+var GROUND_MAX_Y = H - 100;
 
 var ARCHER_WIDTH = 10;
 var ARCHER_HEIGHT = 30;

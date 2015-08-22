@@ -1,26 +1,76 @@
 Crafty.c('GroundManager', {
   init: function() {
-    var segmentWidth = 100;
-    var segments = [];
+    this.segments = [];
     var left = -W;
     var right = -W;
 
     this.bind('EnterFrame', function() {
       var viewportLeft = -Crafty.viewport.x - W;
       var viewportRight = left + 2 * W;
-      while (left < viewportLeft && segments.length > 0) {
-        var segment = segments.shift();
+
+      while (left < viewportLeft && this.segments.length > 0) {
+        var segment = this.segments.shift();
+        left += SEGMENT_WIDTH * cos(segment.rotation);
         segment.destroy();
-        left += segmentWidth;
       }
+
       while (right < viewportRight) {
-        var segment = Crafty.e('2D, Canvas, Color, Ground')
-          .attr({x: right, y: GROUND_Y, w: segmentWidth, h: H - GROUND_Y})
-          .color('#ffffff');
-        segments.push(segment);
-        right += segmentWidth;
+        var prevSegment = this.segments[this.segments.length - 1];
+        var prevY = prevSegment ? prevSegment.y + SEGMENT_WIDTH * sin(prevSegment.rotation) : GROUND_MAX_Y;
+        var prevRotation = prevSegment ? prevSegment.rotation : 0;
+
+        var segment = Crafty.e('2D, Canvas, ground_start, Collision, Ground')
+          .attr({x: right - SKIRT_WIDTH, y: prevY})
+          .origin(SKIRT_WIDTH, SKIRT_HEIGHT)
+          .sprite(0, randInt(3))
+          .collision(
+              [0, 2 * SKIRT_HEIGHT],
+              [SKIRT_WIDTH, SKIRT_HEIGHT],
+              [SKIRT_WIDTH + SEGMENT_WIDTH, SKIRT_HEIGHT],
+              [SKIRT_WIDTH + SEGMENT_WIDTH + SKIRT_WIDTH, 2 * SKIRT_HEIGHT]);
+        segment.rotation = clamp(-40, 40, 0.5 * prevRotation + randFloat(-30, 30));
+        if (prevY + SKIRT_HEIGHT > GROUND_MAX_Y && segment.rotation > 0) {
+          segment.rotation = 0;
+        } else if (prevY + SKIRT_HEIGHT < GROUND_MIN_Y && segment.rotation < 0) {
+          segment.rotation = 0;
+        }
+
+        var bottomY = Math.max(prevY, prevY + SEGMENT_WIDTH * sin(segment.rotation)) + SKIRT_HEIGHT;
+        var bottom = Crafty.e('2D, Canvas, Color, Collision, Ground')
+          .attr({x: right, y: bottomY, w: SEGMENT_WIDTH * cos(segment.rotation) + 1, h: H - bottomY})
+          .color('#000');
+        segment.bind('Remove', (function(bottom) {
+          return function() {
+            bottom.destroy();
+          }
+        }(bottom)));
+
+        this.segments.push(segment);
+        right += SEGMENT_WIDTH * cos(segment.rotation);
       }
     });
+  },
+
+  heightAt: function(x) {
+    for (var i = 0; i < this.segments.length; i++) {
+      var segment = this.segments[i];
+      var startX = segment.x + SKIRT_WIDTH;
+      var endX = startX + SEGMENT_WIDTH * cos(segment.rotation);
+      if (x >= startX && x <= endX) {
+        var startY = segment.y + SKIRT_HEIGHT;
+        var endY = startY + SEGMENT_WIDTH * sin(segment.rotation);
+        return lerp(startY, endY, (x - startX) / (endX - startX));
+      }
+    }
+  },
+});
+
+Crafty.c('SnapToGround', {
+  snapToGround: function() {
+    var groundManager = Crafty('GroundManager');
+    var heightLeft = groundManager.heightAt(this.x);
+    var heightRight = groundManager.heightAt(this.x + this.w);
+    this.y = Math.max(heightLeft, heightRight) - this.h;
   },
 });
 
@@ -44,7 +94,7 @@ Crafty.c('House', {
 
 Crafty.c('Heart', {
   init: function() {
-    this.requires('2D, Canvas, Sprite, Collision, Despawn, heart_full');
+    this.requires('2D, Canvas, Collision, Despawn, heart_full');
 
     this.bind('EnterFrame', function() {
       this.y -= HEART_RISE_SPEED;
