@@ -16,5 +16,12 @@ var ASSETS = {
         ground_start: [0, 0],
       },
     },
+    'dragon.png': {
+      tile: 40,
+      tileh: 50,
+      map: {
+        dragon_start: [0, 0],
+      },
+    },
   },
 };

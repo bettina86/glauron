@@ -4,47 +4,51 @@ Crafty.c('Dragon', {
   },
 });
 
-Crafty.c('Tail', {
-  init: function() {
-    this.requires('2D, Canvas, Color, Collision, Dragon');
-
-    this.bind('EnterFrame', function() {
-      if (!this.dragon) return;
-
-      var pos = this.dragon.trailAt(this.delay);
-      this.x = pos.x - this.w/2;
-      this.y = pos.y - this.h/2;
-
-      var prevPos = this.dragon.trailAt(this.delay - 1);
-      this.rotation = atan2(pos.y - prevPos.y, pos.x - prevPos.x);
-    });
-  },
-
-  tail: function(dragon, delay) {
-    this.dragon = dragon;
-    this.delay = delay;
-    this.dragon.bind('Remove', function() {
-      this.destroy();
-    }.bind(this));
-    return this;
-  },
-});
-
 Crafty.c('DragonCore', {
   init: function() {
-    this.requires('2D, Velocity, Canvas, Color, Collision, Dragon');
+    this.requires('2D, Velocity');
     this.vx = 3;
     this.vy = 0;
     this.fireAmount = FIRE_AMOUNT;
     this.flapCooldown = 0;
     this.fireCooldown = 0;
     this.dragon = this;
-    this.trail = [];
     this.health = 100;
 
-    this
-      .attr({w: 50, h: 50})
-      .origin(25, 25);
+    var pivots = [
+      [12, 24],
+      [12, 24],
+      [12, 24],
+      [16, 26],
+      [12, 26],
+      [16, 28],
+      [10, 24],
+      [10, 26],
+      [14, 28],
+      [10, 26],
+      [10, 26],
+      [10, 26],
+      [10, 24],
+      [10, 30],
+    ];
+    var d = 0;
+    var dragon = this;
+    this.tail = [];
+    for (var i = 0; i < pivots.length; i++) {
+      var p = pivots[pivots.length - 1 - i];
+      var piece = Crafty.e('2D, Canvas, dragon_start, Collision, Dragon')
+        .sprite(pivots.length - 1 - i, 0)
+        .origin(p[0], 25);
+      piece.dragon = this;
+      piece.leftPivot = p[0];
+      piece.rightPivot = p[1];
+      piece.pieceLength = p[1] - p[0];
+      piece.onHit('Ground', function() {
+        dragon.takeDamage(10000);
+        this.unbind('EnterFrame');
+      });
+      this.tail.push(piece);
+    }
 
     this.bind('EnterFrame', function() {
       this.vy += G;
@@ -52,15 +56,33 @@ Crafty.c('DragonCore', {
         this.vy -= FLAP_SPEED / FLAP_TIME;
         this.flapTime--;
       }
-
       this.rotation = atan2(this.vy, this.vx);
 
-      this.flapCooldown--;
-
-      this.trail.unshift(this.center());
-      if (this.trail.length > 100) {
-        this.trail.pop();
+      this.tail[0].attr({
+        x: this.x - this.tail[0].leftPivot,
+        y: this.y - 25,
+        rotation: atan2(this.vy, this.vx),
+      });
+      var prevX = this.tail[0].x + this.tail[0].leftPivot;
+      var prevY = this.tail[0].y + 25;
+      for (var i = 1; i < this.tail.length; i++) {
+        var piece = this.tail[i];
+        var dx = piece.x + piece.leftPivot - prevX;
+        var dy = piece.y + 25 - prevY;
+        var currentDistance = length(dx, dy);
+        var angle = atan2(dy, dx);
+        var x = prevX + cos(angle) * piece.pieceLength;
+        var y = prevY + sin(angle) * piece.pieceLength;
+        piece.attr({
+          x: x - piece.leftPivot,
+          y: y - 25,
+          rotation: 180 + angle,
+        });
+        prevX = x;
+        prevY = y;
       }
+
+      this.flapCooldown--;
 
       Crafty('Stats').distanceFlown = Math.floor(this.x / 100);
 
@@ -73,7 +95,7 @@ Crafty.c('DragonCore', {
           if (this.fireCooldown <= 0) {
             Crafty.e('Fire')
               .velocity(this.vx, this.vy)
-              .fire(this.center(), atan2(this.vy, this.vx));
+              .fire(this.x + cos(this.rotation) * this.tail[0].pieceLength, this.y + sin(this.rotation) * this.tail[0].pieceLength, atan2(this.vy, this.vx));
             this.fireCooldown = 5;
           }
         }
@@ -86,30 +108,6 @@ Crafty.c('DragonCore', {
         }
       }
     });
-
-    this.onHit('Ground', function() {
-      this.vx = 0;
-      this.vy = 0;
-      this.takeDamage(10000);
-    });
-
-    for (var i = 1; i < 10; i++) {
-      var c = 255 - 25 * i;
-      Crafty.e('Tail')
-        .attr({w: 40, h: 40})
-        .origin(20, 20)
-        .color(c, c, c)
-        .tail(this, 5 * i);
-    }
-  },
-
-  center: function() {
-    return {x: this.x + this.w/2, y: this.y + this.h/2};
-  },
-
-  trailAt: function(delay) {
-    if (this.trail.length == 0) return this.center();
-    return this.trail[Math.min(delay, this.trail.length - 1)];
   },
 
   flap: function() {
@@ -138,6 +136,7 @@ Crafty.c('DragonCore', {
     if (this.health < 0) this.health = 0;
     if (this.health <= 0) {
       this.firing = false;
+      this.vx = 0;
       this.removeComponent('Input');
       this.trigger('Die');
     }
@@ -177,10 +176,10 @@ Crafty.c('Fire', {
     });
   },
 
-  fire: function(pos, direction) {
+  fire: function(x, y, direction) {
     this.attr({w: FIRE_SIZE_START, h: FIRE_SIZE_START});
-    this.x = pos.x - this.w/2;
-    this.y = pos.y - this.h/2;
+    this.x = x - this.w/2;
+    this.y = y - this.h/2;
     this.vx += cos(direction) * FIRE_SPEED;
     this.vy += sin(direction) * FIRE_SPEED;
   },

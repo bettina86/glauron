@@ -114,8 +114,7 @@ Crafty.defineScene('game', function() {
   Crafty.e('Stats');
 
   var dragon = Crafty.e('DragonCore, Input, FollowedByCamera')
-    .attr({x: 100, y: 100})
-    .color('#ffffff');
+    .attr({x: 100, y: 100});
   dragon.bind('Die', function() {
     Crafty('Spawner').destroy();
     Crafty.e('Delay').delay(function() {
