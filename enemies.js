@@ -41,6 +41,7 @@ Crafty.c('Arrow', {
         if (!dragon) return;
         dragon.takeDamage(10);
       });
+      this.destroy();
     });
   },
 

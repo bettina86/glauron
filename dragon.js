@@ -39,6 +39,7 @@ Crafty.c('DragonCore', {
     this.fireCooldown = 0;
     this.dragon = this;
     this.trail = [];
+    this.health = 100;
 
     this
       .attr({w: 50, h: 50})
@@ -115,10 +116,15 @@ Crafty.c('DragonCore', {
   },
 
   takeDamage: function(damage) {
-    this.die();
+    this.health -= damage;
+    if (this.health < 0) this.health = 0;
+    if (this.health <= 0) {
+      this.die();
+    }
   },
 
   die: function() {
+    this.health = 0;
     this.destroy();
     Crafty.e('Delay').delay(function() {
       Crafty.enterScene('game');
