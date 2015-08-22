@@ -31,24 +31,29 @@ Crafty.c('Archer', {
 Crafty.c('Arrow', {
   init: function() {
     this.requires('2D, Velocity, Canvas, Color, Collision, Burnable');
-    this
-      .attr({w: 30, h: 4})
+
+    this.sprite = Crafty.e('2D, Canvas, Color')
+      .attr({x: 15, y: 2, w: 30, h: 4})
       .color('#ffffff');
+    this.attach(this.sprite);
 
     this.onHit('Dragon', function(e) {
-      e.forEach(function(item) {
+      for (var i = 0; i < e.length; i++) {
+        var item = e[i];
         var dragon = item.obj.dragon;
         if (!dragon) return;
         dragon.takeDamage(10);
-      });
-      this.destroy();
+        item.obj.attach(this.sprite);
+        this.destroy();
+        break;
+      }
     });
   },
 
   fire: function(vx, vy) {
     this.vx = vx;
     this.vy = vy;
-    this.rotation = atan2(this.vy, this.vx);
+    this.sprite.rotation = atan2(this.vy, this.vx);
   },
 });
 
