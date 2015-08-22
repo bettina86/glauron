@@ -1,17 +1,19 @@
 var W = 1200;
 var H = 800;
 
-var G = .03;
+var G = .05;
 var FLAP_SPEED = 4;
 var FLAP_TIME = 10;
-var FLAP_INTERVAL = 60;
+var FLAP_INTERVAL = 40;
 var FIRE_INTERVAL = 60;
+var GROUND_Y = 650;
 
 Crafty.init(W, H, document.getElementById('game'));
 Crafty.timer.FPS(60);
 
 Crafty.c('Tail', {
   init: function() {
+    this.requires('2D, Canvas, Color');
     this.bind('EnterFrame', function() {
       if (!this.dragon) return;
 
@@ -27,12 +29,16 @@ Crafty.c('Tail', {
   tail: function(dragon, delay) {
     this.dragon = dragon;
     this.delay = delay;
+    this.dragon.bind('Remove', function() {
+      this.destroy();
+    }.bind(this));
     return this;
   },
 });
 
 Crafty.c('Dragon', {
   init: function() {
+    this.requires('2D, Canvas, Color, Collision');
     this.vx = 3;
     this.vy = 0;
     this.flapDelay = 0;
@@ -63,9 +69,13 @@ Crafty.c('Dragon', {
       }
     });
 
+    this.onHit('Ground', function() {
+      this.die();
+    });
+
     for (var i = 1; i < 10; i++) {
       var c = 255 - 25 * i;
-      Crafty.e('2D, Canvas, Color, Tail')
+      Crafty.e('Tail')
         .attr({w: 40, h: 40})
         .origin(20, 20)
         .color(c, c, c)
@@ -95,32 +105,79 @@ Crafty.c('Dragon', {
     this.fireDelay = FIRE_INTERVAL;
     return this;
   },
+
+  die: function() {
+    this.destroy();
+    Crafty.e('Delay').delay(function() {
+      Crafty.enterScene('game');
+    }, 1000);
+  },
+});
+
+Crafty.c('Ground', {
+  init: function() {
+    this.requires('2D, Canvas, Color');
+    this
+      .attr({y: GROUND_Y, w: W*3, h: H - GROUND_Y})
+      .color('#ffffff');
+    this.bind('EnterFrame', function() {
+      this.x = -Crafty.viewport.x;
+    });
+  },
+});
+
+Crafty.c('Spawner', {
+  init: function() {
+
+  },
+});
+
+Crafty.c('FollowedByCamera', {
+  init: function() {
+    this.bind('EnterFrame', function() {
+      Crafty.viewport.scroll('x', -(this.x - 200));
+    });
+  },
+});
+
+Crafty.c('Input', {
+  init: function() {
+    this.requires('Dragon');
+
+    var keyHandler = function(e) {
+      if (e.key == Crafty.keys.UP_ARROW) {
+        this.flap();
+      } else if (e.key == Crafty.keys.SPACE) {
+        this.fire();
+      }
+    };
+
+    var mouseHandler = function mouseHandler(e) {
+      if (e.button == 0) {
+        this.flap();
+      } else if (e.button == 2) {
+        this.fire();
+      }
+    }.bind(this);
+
+    Crafty.bind('KeyDown', keyHandler);
+    document.onmousedown = mouseHandler;
+
+    this.bind('Remove', function() {
+      Crafty.unbind('KeyDown', keyHandler);
+      document.onmousedown = null;
+    });
+  },
 });
 
 Crafty.defineScene('game', function() {
-  var dragon = Crafty.e('2D, Canvas, Color, Dragon')
+  Crafty('*').destroy();
+
+  var dragon = Crafty.e('Dragon, Input, FollowedByCamera')
     .attr({x: 100, y: 100})
     .color('#ffffff');
 
-  Crafty.bind('KeyDown', function(e) {
-    if (e.key == Crafty.keys.UP_ARROW) {
-      dragon.flap();
-    } else if (e.key == Crafty.keys.SPACE) {
-      dragon.fire();
-    }
-  });
-
-  Crafty.bind('EnterFrame', function() {
-    Crafty.viewport.scroll('x', -(dragon.x - 200));
-  });
-
-  document.onmousedown = function(e) {
-    if (e.button == 0) {
-      dragon.flap();
-    } else if (e.button == 2) {
-      dragon.fire();
-    }
-  };
+  Crafty.e('Ground');
 });
 
 Crafty.enterScene('game');
