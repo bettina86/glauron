@@ -10,9 +10,32 @@ var GROUND_Y = 650;
 var ARCHER_WIDTH = 10;
 var ARCHER_HEIGHT = 30;
 var ARROW_SPEED = 5;
+var FIRE_SIZE_START = 10;
+var FIRE_SIZE_END = 80;
+var FIRE_SPEED = 5;
+var FIRE_DISTANCE = 300;
+var FIRE_TIME = FIRE_DISTANCE / FIRE_SPEED;
 
 Crafty.init(W, H, document.getElementById('game'));
 Crafty.timer.FPS(60);
+
+Crafty.c('Velocity', {
+  init: function() {
+    this.vx = 0;
+    this.vy = 0;
+
+    this.bind('EnterFrame', function() {
+      this.x += this.vx;
+      this.y += this.vy;
+    });
+  },
+
+  velocity: function(vx, vy) {
+    this.vx = vx;
+    this.vy = vy;
+    return this;
+  },
+});
 
 Crafty.c('Dragon', {
   init: function() {
@@ -31,7 +54,7 @@ Crafty.c('Tail', {
       this.y = pos.y - this.h/2;
 
       var prevPos = this.dragon.trailAt(this.delay - 1);
-      this.rotation = radToDeg(Math.atan2(pos.y - prevPos.y, pos.x - prevPos.x));
+      this.rotation = atan2(pos.y - prevPos.y, pos.x - prevPos.x);
     });
   },
 
@@ -47,11 +70,11 @@ Crafty.c('Tail', {
 
 Crafty.c('DragonCore', {
   init: function() {
-    this.requires('2D, Canvas, Color, Collision, Dragon');
+    this.requires('2D, Velocity, Canvas, Color, Collision, Dragon');
     this.vx = 3;
     this.vy = 0;
-    this.flapDelay = 0;
-    this.fireDelay = 0;
+    this.flapCooldown = 0;
+    this.fireCooldown = 0;
     this.dragon = this;
     this.trail = [];
 
@@ -65,17 +88,23 @@ Crafty.c('DragonCore', {
         this.vy -= FLAP_SPEED / FLAP_TIME;
         this.flapTime--;
       }
-      this.x += this.vx;
-      this.y += this.vy;
 
-      this.rotation = radToDeg(Math.atan2(this.vy, this.vx));
+      this.rotation = atan2(this.vy, this.vx);
 
-      this.flapDelay--;
-      this.fireDelay--;
+      this.flapCooldown--;
 
       this.trail.unshift(this.center());
       if (this.trail.length > 100) {
         this.trail.pop();
+      }
+
+      if (this.fireCooldown > 0) {
+        this.fireCooldown--;
+      } else if (this.firing) {
+        Crafty.e('Fire')
+          .velocity(this.vx, this.vy)
+          .fire(this.center(), atan2(this.vy, this.vx));
+        this.fireCooldown = 5;
       }
     });
 
@@ -104,16 +133,14 @@ Crafty.c('DragonCore', {
 
   flap: function() {
     if (this.y < 0) return;
-    if (this.flapDelay > 0) return;
+    if (this.flapCooldown > 0) return;
     this.flapTime = FLAP_TIME;
-    this.flapDelay = FLAP_INTERVAL;
+    this.flapCooldown = FLAP_INTERVAL;
     return this;
   },
 
-  fire: function() {
-    if (this.fireDelay > 0) return;
-    this.fireDelay = FIRE_INTERVAL;
-    return this;
+  fire: function(firing) {
+    this.firing = firing;
   },
 
   takeDamage: function(damage) {
@@ -125,6 +152,42 @@ Crafty.c('DragonCore', {
     Crafty.e('Delay').delay(function() {
       Crafty.enterScene('game');
     }, 1000);
+  },
+});
+
+Crafty.c('Fire', {
+  init: function() {
+    this.requires('2D, Canvas, Color, Velocity, Collision');
+    this.color('#ff8000');
+
+    this.lifetime = 0;
+
+    this.bind('EnterFrame', function() {
+      this.lifetime++;
+      if (this.lifetime >= FIRE_TIME) {
+        this.destroy();
+        return;
+      }
+      var s = lerp(FIRE_SIZE_START, FIRE_SIZE_END, this.lifetime / FIRE_TIME);
+      this.x -= (s - this.w) / 2;
+      this.y -= (s - this.h) / 2;
+      this.w = s;
+      this.h = s;
+    });
+
+    this.onHit('Burnable', function(e) {
+      e.forEach(function(item) {
+        item.obj.destroy();
+      });
+    });
+  },
+
+  fire: function(pos, direction) {
+    this.attr({w: FIRE_SIZE_START, h: FIRE_SIZE_START});
+    this.x = pos.x - this.w/2;
+    this.y = pos.y - this.h/2;
+    this.vx += cos(direction) * FIRE_SPEED;
+    this.vy += sin(direction) * FIRE_SPEED;
   },
 });
 
@@ -142,7 +205,7 @@ Crafty.c('Ground', {
 
 Crafty.c('Archer', {
   init: function() {
-    this.requires('2D, Canvas, Color');
+    this.requires('2D, Canvas, Color, Burnable');
     this
       .attr({w: ARCHER_WIDTH, h: ARCHER_HEIGHT})
       .color('#dddddd');
@@ -172,30 +235,24 @@ Crafty.c('Archer', {
 
 Crafty.c('Arrow', {
   init: function() {
-    this.requires('2D, Canvas, Color, Collision');
+    this.requires('2D, Velocity, Canvas, Color, Collision, Burnable');
     this
       .attr({w: 30, h: 4})
       .color('#ffffff');
 
-    this.vx = 0;
-    this.vy = 0;
-
-    this.bind('EnterFrame', function() {
-      this.x += this.vx;
-      this.y += this.vy;
-    });
-
     this.onHit('Dragon', function(e) {
-      var dragon = e[0].obj.dragon;
-      if (!dragon) return;
-      dragon.takeDamage(10);
+      e.forEach(function(item) {
+        var dragon = item.obj.dragon;
+        if (!dragon) return;
+        dragon.takeDamage(10);
+      });
     });
   },
 
   fire: function(vx, vy) {
     this.vx = vx;
     this.vy = vy;
-    this.rotation = radToDeg(Math.atan2(this.vy, this.vx));
+    this.rotation = atan2(this.vy, this.vx);
   },
 });
 
@@ -238,27 +295,40 @@ Crafty.c('Input', {
   init: function() {
     this.requires('Dragon');
 
-    var keyHandler = function(e) {
+    var keyDownHandler = function(e) {
       if (e.key == Crafty.keys.UP_ARROW) {
         this.flap();
       } else if (e.key == Crafty.keys.SPACE) {
-        this.fire();
+        this.fire(true);
+      }
+    }.bind(this);
+    var keyUpHandler = function(e) {
+      if (e.key == Crafty.keys.SPACE) {
+        this.fire(false);
       }
     }.bind(this);
 
-    var mouseHandler = function mouseHandler(e) {
+    var mouseDownHandler = function mouseDownHandler(e) {
       if (e.button == 0) {
         this.flap();
       } else if (e.button == 2) {
-        this.fire();
+        this.fire(true);
+      }
+    }.bind(this);
+    var mouseUpHandler = function mouseUpHandler(e) {
+      if (e.button == 2) {
+        this.fire(false);
       }
     }.bind(this);
 
-    Crafty.bind('KeyDown', keyHandler);
-    document.onmousedown = mouseHandler;
+    Crafty.bind('KeyDown', keyDownHandler);
+    Crafty.bind('KeyUp', keyUpHandler);
+    document.onmousedown = mouseDownHandler;
+    document.onmouseup = mouseUpHandler;
 
     this.bind('Remove', function() {
-      Crafty.unbind('KeyDown', keyHandler);
+      Crafty.unbind('KeyDown', keyDownHandler);
+      Crafty.unbind('KeyUp', keyUpHandler);
       document.onmousedown = null;
     });
   },
