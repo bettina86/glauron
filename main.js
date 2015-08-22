@@ -10,11 +10,13 @@ var GROUND_Y = 650;
 var ARCHER_WIDTH = 10;
 var ARCHER_HEIGHT = 30;
 var ARROW_SPEED = 5;
+var FIRE_AMOUNT = 60;
+var FIRE_REPLENISH = 0.3;
 var FIRE_SIZE_START = 10;
 var FIRE_SIZE_END = 80;
 var FIRE_SPEED = 5;
 var FIRE_DISTANCE = 300;
-var FIRE_TIME = FIRE_DISTANCE / FIRE_SPEED;
+var FIRE_LIFETIME = FIRE_DISTANCE / FIRE_SPEED;
 
 Crafty.init(W, H, document.getElementById('game'));
 Crafty.timer.FPS(60);
@@ -73,6 +75,7 @@ Crafty.c('DragonCore', {
     this.requires('2D, Velocity, Canvas, Color, Collision, Dragon');
     this.vx = 3;
     this.vy = 0;
+    this.fireAmount = FIRE_AMOUNT;
     this.flapCooldown = 0;
     this.fireCooldown = 0;
     this.dragon = this;
@@ -100,11 +103,20 @@ Crafty.c('DragonCore', {
 
       if (this.fireCooldown > 0) {
         this.fireCooldown--;
-      } else if (this.firing) {
-        Crafty.e('Fire')
-          .velocity(this.vx, this.vy)
-          .fire(this.center(), atan2(this.vy, this.vx));
-        this.fireCooldown = 5;
+      }
+      if (this.firing) {
+        if (this.fireAmount >= 1) {
+          this.fireAmount--;
+          if (this.fireCooldown <= 0) {
+            Crafty.e('Fire')
+              .velocity(this.vx, this.vy)
+              .fire(this.center(), atan2(this.vy, this.vx));
+            this.fireCooldown = 5;
+          }
+        }
+      } else {
+        this.fireAmount += FIRE_REPLENISH;
+        if (this.fireAmount > FIRE_AMOUNT) this.fireAmount = FIRE_AMOUNT;
       }
     });
 
@@ -164,11 +176,11 @@ Crafty.c('Fire', {
 
     this.bind('EnterFrame', function() {
       this.lifetime++;
-      if (this.lifetime >= FIRE_TIME) {
+      if (this.lifetime >= FIRE_LIFETIME) {
         this.destroy();
         return;
       }
-      var s = lerp(FIRE_SIZE_START, FIRE_SIZE_END, this.lifetime / FIRE_TIME);
+      var s = lerp(FIRE_SIZE_START, FIRE_SIZE_END, this.lifetime / FIRE_LIFETIME);
       this.x -= (s - this.w) / 2;
       this.y -= (s - this.h) / 2;
       this.w = s;
