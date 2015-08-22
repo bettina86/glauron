@@ -6,11 +6,14 @@ var FLAP_SPEED = 4;
 var FLAP_TIME = 10;
 var FLAP_INTERVAL = 30;
 var FIRE_INTERVAL = 60;
+
 var GROUND_Y = 650;
+
 var ARCHER_WIDTH = 10;
 var ARCHER_HEIGHT = 30;
 var ARROW_SPEED = 5;
 var ARROW_G = 0.01;
+
 var FIRE_AMOUNT = 60;
 var FIRE_REPLENISH = 0.3;
 var FIRE_SIZE_START = 10;
@@ -18,6 +21,11 @@ var FIRE_SIZE_END = 80;
 var FIRE_SPEED = 5;
 var FIRE_DISTANCE = 300;
 var FIRE_LIFETIME = FIRE_DISTANCE / FIRE_SPEED;
+
+var HOUSE_WIDTH = 50;
+var HOUSE_HEIGHT = 50;
+var HEART_SPAWN_PROB = 0.3;
+var HEART_RISE_SPEED = 3;
 
 Crafty.c('Velocity', {
   init: function() {

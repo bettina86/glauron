@@ -132,6 +132,11 @@ Crafty.c('DragonCore', {
     }
   },
 
+  heal: function(health) {
+    this.health += health;
+    if (this.health > 100) this.health = 100;
+  },
+
   die: function() {
     this.health = 0;
     this.firing = false;

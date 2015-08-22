@@ -12,6 +12,10 @@ Crafty.c('Spawner', {
           Crafty.e('Archer, Despawn')
             .attr({x: -Crafty.viewport.x + W, y: GROUND_Y - ARCHER_HEIGHT});
           cooldown = 60;
+        } else if (Math.random() < 0.01) {
+          Crafty.e('House, Despawn')
+            .attr({x: -Crafty.viewport.x + W, y: GROUND_Y - HOUSE_HEIGHT});
+          cooldown = 60;
         }
       }
     });

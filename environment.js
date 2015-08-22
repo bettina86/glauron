@@ -24,3 +24,41 @@ Crafty.c('GroundManager', {
   },
 });
 
+Crafty.c('House', {
+  init: function() {
+    this.requires('2D, Canvas, Color, Collision, Burnable');
+    
+    this
+      .attr({w: HOUSE_WIDTH, h: HOUSE_HEIGHT})
+      .color('#dddddd');
+
+    this.bind('Remove', function() {
+      if (Math.random() < HEART_SPAWN_PROB) {
+        Crafty.e('Heart')
+          .attr({x: this.x + this.w/2, y: this.y + this.h/2});
+      }
+    });
+  },
+});
+
+Crafty.c('Heart', {
+  init: function() {
+    this.requires('2D, Canvas, Sprite, Collision, Despawn, heart_full');
+
+    this.bind('EnterFrame', function() {
+      this.y -= HEART_RISE_SPEED;
+    });
+
+    this.onHit('Dragon', function(e) {
+      for (var i = 0; i < e.length; i++) {
+        var item = e[i];
+        if (item.type == 'MBR') continue;
+        var dragon = item.obj.dragon;
+        if (!dragon) continue;
+        dragon.heal(20);
+        break;
+      }
+      this.destroy();
+    });
+  },
+});
