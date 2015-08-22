@@ -3,36 +3,41 @@
   <head>
     <title>Glauron</title>
     <style>
+      @font-face {
+        font-family: "EG Dragon Caps";
+        src: url(EG_Dragon_Caps.ttf);
+      }
       html {
         background: #000;
         color: #fff;
-        font-family: sans-serif;
+        font-family: 'EG Dragon Caps', sans-serif;
+        font-size: 14px;
       }
       #game {
         margin: 20px auto;
       }
       dl {
         color: #888;
-        width: 420px;
+        width: 620px;
         margin: 0 auto;
       }
       dt {
         float: left;
-        width: 200px;
+        width: 300px;
         text-align: right;
       }
       dd {
-        margin-left: 220px;
+        margin-left: 320px;
       }
     </style>
   </head>
   <body>
     <div id="game"></div>
     <dl>
-      <dt>Up / Left mouse button</dt>
-      <dd>Flap wings</dd>
-      <dt>Space / Right mouse button</dt>
-      <dd>Breathe fire</dd>
+      <dt>up / left mouse button</dt>
+      <dd>flap wings</dd>
+      <dt>space / right mouse button</dt>
+      <dd>breathe fire</dd>
     </dl>
     <script src="crafty-min.js"></script>
     <script src="util.js"></script>
@@ -40,6 +45,8 @@
     <script src="dragon.js"></script>
     <script src="enemies.js"></script>
     <script src="environment.js"></script>
+    <script src="hud.js"></script>
+    <script src="assets.js"></script>
     <script src="main.js"></script>
   </body>
 </html>

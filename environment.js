@@ -5,7 +5,7 @@ Crafty.c('Ground', {
       .attr({y: GROUND_Y, w: W*3, h: H - GROUND_Y})
       .color('#ffffff');
     this.bind('EnterFrame', function() {
-      this.x = -Crafty.viewport.x;
+      this.x = -Crafty.viewport.x - W;
     });
   },
 });
