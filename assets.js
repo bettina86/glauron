@@ -50,6 +50,7 @@ var ASSETS = {
       tileh: 4,
       map: {
         arrow_start: [0, 0],
+        arrow_silver: [0, 1],
       },
     },
     'fire.png': {

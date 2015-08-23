@@ -1,16 +1,29 @@
-Crafty.c('Archer', {
+Crafty.c('Enemy', {
   init: function() {
-    this.requires('2D, Canvas, archer_body, Burnable, Scorable');
+    this.requires('2D, Canvas, Burnable, Scorable');
 
+    this.one('Burn', function() {
+      Crafty('Stats').archersKilled++;
+      this.score(10);
+      playSound('archer');
+    });
+
+    this.bind('Remove', function() {
+      if (this.bow) this.bow.destroy();
+    });
+  },
+});
+
+Crafty.c('Launcher', {
+  init: function() {
+    this.requires('2D');
+    this.projectileType = null;
+
+    var projectile = null;
     var cooldown = 0;
 
-    var bow = Crafty.e('2D, Canvas, archer_bow')
-      .origin(12, 12);
-    this.attach(bow);
-
-    var arrow = null;
-
     this.bind('EnterFrame', function() {
+      if (!this.projectileType) return;
       var dragon = Crafty('DragonCore');
       if (dragon.length == 0 || dragon.isDead()) return;
       var dx = dragon.x - this.x;
@@ -20,45 +33,72 @@ Crafty.c('Archer', {
       fireAngle = atan2(dy, dx) + distanceAdjustment;
       fireAngle = canonicalize(fireAngle);
       if (fireAngle > 270) fireAngle = 270;
-      bow.rotation = fireAngle - 180;
+      this.rotation = fireAngle - 180;
 
       if (cooldown > 0) {
         cooldown--;
       } else {
-        if (!arrow) {
-          arrow = Crafty.e('Arrow, Despawn')
-            .attr({x: this.x, y: this.y + 13});
-          var bowRotation = bow.rotation;
-          bow.rotation = 0;
-          bow.attach(arrow);
-          bow.rotation = bowRotation;
+        if (!projectile) {
+          projectile = Crafty.e(this.projectileType + ', Despawn')
+            .attr({x: this.x - 4, y: this.y + 11});
+          var prevRot = this.rotation;
+          this.rotation = 0;
+          this.attach(projectile);
+          this.rotation = prevRot;
         }
         if (dx <= 0 && dx >= -W && Math.random() < 0.01) {
-          bow.detach(arrow);
-          arrow.fire();
-          arrow = null;
+          this.detach(projectile);
+          projectile.fire();
+          projectile = null;
           cooldown = 60;
         }
       }
     });
+  },
 
-    this.one('Burn', function() {
-      Crafty('Stats').archersKilled++;
-      this.score(10);
-      playSound('archer');
-    });
+  projectile: function(p) {
+    this.projectileType = p;
+    return this;
+  }
+});
 
-    this.bind('Remove', function() {
-      bow.destroy();
-    });
+Crafty.c('Archer', {
+  init: function() {
+    this.requires('Enemy, archer_body');
+
+    this.attach(Crafty.e('2D, Canvas, Launcher, archer_bow')
+      .origin(12, 12)
+      .projectile('Arrow'));
+  },
+});
+
+Crafty.c('Longbowman', {
+  init: function() {
+    this.requires('Enemy, archer_body');
+
+    this.attach(Crafty.e('2D, Canvas, Launcher, archer_bow')
+      .origin(12, 12)
+      .projectile('SilverArrow'));
   },
 });
 
 Crafty.c('Arrow', {
   init: function() {
-    this.requires('2D, Velocity, Canvas, arrow_start, Collision, Burnable, Despawn, Scorable');
-    this
-      .origin(0, 2);
+    this.requires('Projectile, arrow_start, Burnable');
+  },
+});
+
+Crafty.c('SilverArrow', {
+  init: function() {
+    this.requires('Projectile, arrow_silver');
+    this.z = 4;
+  },
+});
+
+Crafty.c('Projectile', {
+  init: function() {
+    this.requires('2D, Velocity, Canvas, Collision, Despawn, Scorable');
+    this.origin(0, 2);
 
     //this.requires('Canvas, Color');
     //this.attr({w: 6, h: 6}).color('#ff00ff');

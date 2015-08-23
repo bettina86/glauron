@@ -9,6 +9,7 @@ Crafty.c('Stats', {
     this.score = 0;
     this.multiplier = 1;
     this.multiplierLifetime = 0;
+    this.level = 0;
 
     this.bind('EnterFrame', function() {
       if (this.multiplierLifetime > 0) {
@@ -17,6 +18,7 @@ Crafty.c('Stats', {
           this.multiplier = 1;
         }
       }
+      this.level = Math.max(this.level, Math.floor(this.distanceFlown / 50));
     });
   },
 
