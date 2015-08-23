@@ -282,6 +282,7 @@ Crafty.c('AnyKey', {
 
     var mouseDownHandler = function(e) {
       if (e.button != 0) return;
+      if (e.target.tagName == 'A') return;
       this.trigger('AnyKey');
       e.preventDefault();
     }.bind(this);
