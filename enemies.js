@@ -18,6 +18,8 @@ Crafty.c('Archer', {
       var d = length(dx, dy);
       var distanceAdjustment = 0.03 * d;
       fireAngle = atan2(dy, dx) + distanceAdjustment;
+      fireAngle = canonicalize(fireAngle);
+      if (fireAngle > 270) fireAngle = 270;
       bow.rotation = fireAngle - 180;
 
       if (cooldown > 0) {
@@ -40,7 +42,7 @@ Crafty.c('Archer', {
       }
     });
 
-    this.bind('Burn', function() {
+    this.one('Burn', function() {
       Crafty('Stats').archersKilled++;
     });
 
@@ -104,7 +106,7 @@ Crafty.c('Arrow', {
       this.falling = false;
     });
 
-    this.bind('Burn', function() {
+    this.one('Burn', function() {
       Crafty('Stats').arrowsDestroyed++;
     });
   },

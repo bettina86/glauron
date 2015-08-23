@@ -6,6 +6,10 @@ function degToRad(deg) {
   return Math.PI / 180 * deg;
 }
 
+function canonicalize(deg) {
+  return ((deg % 360) + 360) % 360;
+}
+
 function length(dx, dy) {
   return Math.sqrt(dx*dx + dy*dy);
 }

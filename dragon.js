@@ -248,9 +248,9 @@ Crafty.c('Fire', {
 
 Crafty.c('Burnable', {
   init: function() {
-    this.bind('Burn', function() {
+    this.one('Burn', function() {
       for (var i = 0; i < 3; i++) {
-        var s = Math.sqrt(this.w * this.h);
+        var s = 1.3 * Math.sqrt(this.w * this.h);
         Crafty.e('Smoke')
           .attr({
             x: this.x + this.w/2 - s/2 + randFloat(-0.3, 0.3) * this.w,

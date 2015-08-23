@@ -79,7 +79,7 @@ Crafty.c('House', {
   init: function() {
     this.requires('2D, Canvas, house_start, Collision, Burnable');
 
-    this.bind('Burn', function() {
+    this.one('Burn', function() {
       if (Math.random() < HEART_SPAWN_PROB) {
         Crafty.e('Heart')
           .attr({x: this.x + this.w/2, y: this.y + this.h/2});
