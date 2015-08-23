@@ -6,7 +6,6 @@ Makefile
 *.aup
 .*
 *_data
-*.wav
 *.mmp
 screenshots
 src
