@@ -326,3 +326,11 @@ function doneLoading() {
     })
     .setElementContent('loading-text', 'Click or press space to start');
 }
+
+window.addEventListener('focus', function() {
+  Crafty.pause(false);
+});
+
+window.addEventListener('blur', function() {
+  Crafty.pause(true);
+});
