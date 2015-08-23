@@ -55,6 +55,15 @@ Crafty.c('DragonCore', {
       this.tail.push(piece);
     }
 
+    this.wings = [];
+    for (var i = 0; i < 2; i++) {
+      this.wings[i] = Crafty.e('2D, Canvas, wing_start');
+    }
+    this.wings[0].attr({x: -40 + this.tail[3].leftPivot, y: -80 + 25});
+    this.tail[3].attach(this.wings[0]);
+    this.wings[1].attr({x: -40 + this.tail[4].rightPivot, y: -80 + 25});
+    this.tail[4].attach(this.wings[1]);
+
     this.bind('EnterFrame', function() {
       this.vy += G;
       if (this.flapTime > 0) {
@@ -87,7 +96,30 @@ Crafty.c('DragonCore', {
         prevY = y;
       }
 
-      this.flapCooldown--;
+      if (this.flapCooldown > 0) {
+        this.flapCooldown--;
+      }
+      var wingHeight;
+      if (this.flapTime > 0) {
+        wingHeight = -1 + 2 * this.flapTime / FLAP_TIME;
+      } else {
+        wingHeight = 1 - 2 * this.flapCooldown / FLAP_INTERVAL;
+      }
+      wingHeight *= 80;
+      for (var i = 0; i < this.wings.length; i++) {
+        var wing = this.wings[i];
+        var parent = wing._parent;
+        var parentX = parent._x;
+        var parentY = parent._y;
+        var parentRotation = parent._rotation;
+        parent.x = 0;
+        parent.y = 0;
+        parent.rotation = 0;
+        wing.attr({h: wingHeight, y: 25 - wingHeight})
+        parent.x = parentX;
+        parent.y = parentY;
+        parent.rotation = parentRotation;
+      }
 
       Crafty('Stats').distanceFlown = Math.floor(this.x / 100);
 

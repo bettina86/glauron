@@ -23,5 +23,12 @@ var ASSETS = {
         dragon_start: [0, 0],
       },
     },
+    'wing.png': {
+      tile: 60,
+      tileh: 80,
+      map: {
+        wing_start: [0, 0],
+      },
+    },
   },
 };
