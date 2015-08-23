@@ -120,7 +120,7 @@ Crafty.c('Arrow', {
   fall: function(vx, vy) {
     this.flying = true;
     this.falling = true;
-    this._parent.detach(this);
+    if (this._parent) this._parent.detach(this);
     this.vx = vx;
     this.vy = vy + 1;
   },

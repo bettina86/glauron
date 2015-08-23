@@ -246,3 +246,50 @@ Crafty.c('Fire', {
   },
 });
 
+Crafty.c('Burnable', {
+  init: function() {
+    this.bind('Burn', function() {
+      for (var i = 0; i < 3; i++) {
+        var s = Math.sqrt(this.w * this.h);
+        Crafty.e('Smoke')
+          .attr({
+            x: this.x + this.w/2 - s/2 + randFloat(-0.3, 0.3) * this.w,
+            y: this.y + this.h/2 - s/2 + randFloat(-0.3, 0.3) * this.h,
+            w: s, h: s});
+      }
+    });
+  },
+});
+
+var SMOKE_LIFETIME = 120;
+
+Crafty.c('Smoke', {
+  init: function() {
+    this.requires('2D, Canvas, smoke_start, Velocity');
+
+    this.vy = randFloat(-1.2, -0.8);
+    this.vx = randFloat(-0.3, 0.3);
+    this.rotation = randFloat(0, 360);
+    var rotationSpeed = randFloat(-1, 1);
+    var growth = 1;
+
+    var lifetime = 0;
+    this.bind('EnterFrame', function() {
+      lifetime++;
+      if (lifetime > SMOKE_LIFETIME) {
+        this.destroy();
+        return;
+      }
+      this.rotation += rotationSpeed;
+      this.w += growth;
+      this.h += growth;
+      this.x -= growth/2;
+      this.y -= growth/2;
+      this.alpha = Math.min(1, 2 * (1 - lifetime / SMOKE_LIFETIME));
+    });
+    this.bind('Move', function() {
+      this.origin(this.w / 2, this.h / 2);
+    });
+    this.trigger('EnterFrame');
+  },
+});

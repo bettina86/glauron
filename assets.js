@@ -59,5 +59,12 @@ var ASSETS = {
         fire_start: [0, 0],
       },
     },
+    'smoke.png': {
+      tile: 100,
+      tileh: 100,
+      map: {
+        smoke_start: [0, 0],
+      },
+    },
   },
 };
