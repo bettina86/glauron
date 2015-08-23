@@ -77,16 +77,17 @@ Crafty.c('SnapToGround', {
 
 Crafty.c('House', {
   init: function() {
-    this.requires('2D, Canvas, house_start, Collision, Burnable');
+    this.requires('2D, Canvas, house_start, Collision, Burnable, Scorable');
 
     this.one('Burn', function() {
       if (Math.random() < HEART_SPAWN_PROB) {
         Crafty.e('Heart')
           .attr({x: this.x + this.w/2, y: this.y + this.h/2});
-        Crafty.audio.play('heart', 1, 0.8);
+        playSound('heart');
       }
       Crafty('Stats').housesDestroyed++;
-      Crafty.audio.play('house', 1, 0.3);
+      this.score(5);
+      playSound('house');
     });
   },
 });

@@ -77,15 +77,15 @@ var ASSETS = {
 };
 
 var SOUNDS = {
-  archer: ['archer.wav'],
-  arrow: ['arrow.wav'],
-  die: ['die.wav'],
-  fire: ['fire.wav'],
-  flap: ['flap.wav'],
-  heal: ['heal.wav'],
-  heart: ['heart.wav'],
-  hit: ['hit.wav'],
-  house: ['house.wav'],
-  shoot: ['shoot.wav'],
-  start: ['start.wav'],
+  archer: {volume: 0.5},
+  arrow: {volume: 0.5},
+  die: {volume: 0.5},
+  fire: {volume: 0.1},
+  flap: {volume: 0.2},
+  heal: {volume: 0.4},
+  heart: {volume: 0.8},
+  hit: {volume: 0.4},
+  house: {volume: 0.3},
+  shoot: {volume: 0.1},
+  start: {volume: 0.5},
 };

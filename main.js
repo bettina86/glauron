@@ -146,26 +146,6 @@ Crafty.c('Input', {
   },
 });
 
-Crafty.c('Stats', {
-  init: function() {
-    this.archersKilled = 0;
-    this.arrowsDestroyed = 0;
-    this.housesDestroyed = 0;
-    this.heartsCollected = 0;
-    this.distanceFlown = 0;
-  },
-
-  archersKilledScore: function() { return this.archersKilled * 10; },
-
-  arrowsDestroyedScore: function() { return this.arrowsDestroyed * 2; },
-
-  housesDestroyedScore: function() { return this.housesDestroyed * 5; },
-
-  score: function() {
-    return this.archersKilledScore() + this.arrowsDestroyedScore() + this.housesDestroyedScore();
-  },
-});
-
 Crafty.defineScene('intro', function() {
   Crafty.e('StaticDom')
     .bindElementVisibility('loading');
@@ -197,6 +177,7 @@ Crafty.defineScene('game', function() {
 
   Crafty.e('Fixed')
     .attach(Crafty.e('HealthBar').attr({x: 5, y: 5}))
+    .attach(Crafty.e('ScoreBar'))
     .attach(Crafty.e('FireBar').attr({x: W - FIRE_AMOUNT - 5, y: 10}));
 });
 
@@ -208,13 +189,11 @@ Crafty.c('GameOver', {
     this
       .bindElementVisibility('game-over')
       .setElementContent('archers-killed', stats.archersKilled)
-      .setElementContent('archers-killed-score', stats.archersKilledScore())
       .setElementContent('arrows-destroyed', stats.arrowsDestroyed)
-      .setElementContent('arrows-destroyed-score', stats.arrowsDestroyedScore())
       .setElementContent('houses-destroyed', stats.housesDestroyed)
-      .setElementContent('houses-destroyed-score', stats.housesDestroyedScore())
       .setElementContent('distance-flown', stats.distanceFlown)
-      .setElementContent('score', stats.score());
+      .setElementContent('highest-multiplier', stats.highestMultiplier)
+      .setElementContent('score', stats.score);
   },
 });
 
@@ -250,17 +229,14 @@ Crafty.load(ASSETS, doneLoading);
 thingsLoading++;
 
 for (var key in SOUNDS) {
+  var sound = SOUNDS[key];
   SOUNDS[key] = new Howl({
-    urls: SOUNDS[key],
+    urls: [key + '.wav'],
     onload: loadedOne,
     onloaderror: loadedOne,
+    volume: sound.volume,
   });
   thingsLoading++;
-}
-
-Crafty.audio.play = function(name, times, volume) {
-  SOUNDS[name].volume = volume;
-  SOUNDS[name].play();
 }
 
 function loadedOne() {

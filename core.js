@@ -33,6 +33,8 @@ var HOUSE_HEIGHT = 50;
 var HEART_SPAWN_PROB = 0.3;
 var HEART_RISE_SPEED = 3;
 
+var MULTIPLIER_LIFETIME = 30;
+
 Crafty.c('Velocity', {
   init: function() {
     this.vx = 0;
@@ -96,3 +98,7 @@ Crafty.c('Fixed', {
     });
   },
 });
+
+function playSound(name) {
+  SOUNDS[name].play();
+}

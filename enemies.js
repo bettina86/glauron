@@ -1,6 +1,6 @@
 Crafty.c('Archer', {
   init: function() {
-    this.requires('2D, Canvas, archer_body, Burnable');
+    this.requires('2D, Canvas, archer_body, Burnable, Scorable');
 
     var cooldown = 0;
 
@@ -44,7 +44,8 @@ Crafty.c('Archer', {
 
     this.one('Burn', function() {
       Crafty('Stats').archersKilled++;
-      Crafty.audio.play('archer', 1, 0.5);
+      this.score(10);
+      playSound('archer');
     });
 
     this.bind('Remove', function() {
@@ -55,7 +56,7 @@ Crafty.c('Archer', {
 
 Crafty.c('Arrow', {
   init: function() {
-    this.requires('2D, Velocity, Canvas, arrow_start, Collision, Burnable, Despawn');
+    this.requires('2D, Velocity, Canvas, arrow_start, Collision, Burnable, Despawn, Scorable');
     this
       .origin(0, 2);
 
@@ -109,7 +110,8 @@ Crafty.c('Arrow', {
 
     this.one('Burn', function() {
       Crafty('Stats').arrowsDestroyed++;
-      Crafty.audio.play('arrow', 1, 0.5);
+      this.score(2);
+      playSound('arrow');
     });
   },
 
@@ -118,7 +120,7 @@ Crafty.c('Arrow', {
     this.vx = -cos(this.rotation) * ARROW_SPEED;
     this.vy = -sin(this.rotation) * ARROW_SPEED;
     this.flying = true;
-    Crafty.audio.play('shoot', 1, 0.1);
+    playSound('shoot');
     return this;
   },
 

@@ -43,6 +43,20 @@ Crafty.c('HealthBar', {
   },
 });
 
+Crafty.c('ScoreBar', {
+  init: function() {
+    this.requires('2D, Canvas, Text');
+    this
+      .textColor('#cccccc')
+      .textFont({family: 'Bilbo', size: '32px', weight: 'bold'});
+    this.bind('EnterFrame', function() {
+      var stats = Crafty('Stats');
+      this.text('Score: ' + stats.score);
+      this.x = -Crafty.viewport.x + (W - this.w) / 2;
+    });
+  },
+});
+
 Crafty.c('FireBar', {
   init: function() {
     this.requires('2D, Canvas, Color');
