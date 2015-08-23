@@ -130,9 +130,11 @@ Crafty.c('DragonCore', {
         if (this.fireAmount >= 1) {
           this.fireAmount--;
           if (this.fireCooldown <= 0) {
-            Crafty.e('Fire')
-              .velocity(this.vx, this.vy)
-              .fire(this.x + cos(this.rotation) * this.tail[0].pieceLength, this.y + sin(this.rotation) * this.tail[0].pieceLength, atan2(this.vy, this.vx));
+            for (var i = 0; i < 4; i++) {
+              Crafty.e('Fire')
+                .velocity(this.vx, this.vy)
+                .fire(this.x + cos(this.rotation) * 0.7 * this.tail[0].pieceLength, this.y + sin(this.rotation) * 0.7 * this.tail[0].pieceLength, atan2(this.vy, this.vx), i);
+            }
             this.fireCooldown = 5;
           }
         }
@@ -185,12 +187,15 @@ Crafty.c('DragonCore', {
   },
 });
 
+var FIRE_SIZES = [0.4, 0.6, 0.8, 1.0];
+var FIRE_SPEEDS = [1.0, 0.98, 0.96, 0.94];
+
 Crafty.c('Fire', {
   init: function() {
-    this.requires('2D, Canvas, Color, Velocity, Collision');
-    this.color('#ff8000');
+    this.requires('2D, Canvas, fire_start, Velocity, Collision');
 
     this.lifetime = 0;
+    this.spriteNumber = 0;
 
     this.bind('EnterFrame', function() {
       this.lifetime++;
@@ -198,27 +203,37 @@ Crafty.c('Fire', {
         this.destroy();
         return;
       }
-      var s = lerp(FIRE_SIZE_START, FIRE_SIZE_END, this.lifetime / FIRE_LIFETIME);
+      var s = FIRE_SIZES[this.spriteNumber] * lerp(FIRE_SIZE_START, FIRE_SIZE_END, this.lifetime / FIRE_LIFETIME);
       this.x -= (s - this.w) / 2;
       this.y -= (s - this.h) / 2;
       this.w = s;
       this.h = s;
-    });
-
-    this.onHit('Burnable', function(e) {
-      e.forEach(function(item) {
-        item.obj.trigger('Burn');
-        item.obj.destroy();
-      });
+      this.origin(s / 2, s / 2);
+      this.rotation = atan2(this.vy, this.vx);
+      this.alpha = Math.min(1, (this.spriteNumber + 1) * (1 - this.lifetime / FIRE_LIFETIME));
     });
   },
 
-  fire: function(x, y, direction) {
-    this.attr({w: FIRE_SIZE_START, h: FIRE_SIZE_START});
+  fire: function(x, y, direction, spriteNumber) {
+    var s = FIRE_SIZE_START * FIRE_SIZES[spriteNumber];
+    this.attr({w: s, h: s});
     this.x = x - this.w/2;
     this.y = y - this.h/2;
-    this.vx += cos(direction) * FIRE_SPEED;
-    this.vy += sin(direction) * FIRE_SPEED;
+    this.z = 4 - spriteNumber;
+    this.vx += cos(direction) * FIRE_SPEED * FIRE_SPEEDS[spriteNumber];
+    this.vy += sin(direction) * FIRE_SPEED * FIRE_SPEEDS[spriteNumber];
+    this.sprite(spriteNumber, 0);
+    this.spriteNumber = spriteNumber;
+    if (spriteNumber == 2) {
+      this.addComponent('Collision');
+
+      this.onHit('Burnable', function(e) {
+        e.forEach(function(item) {
+          item.obj.trigger('Burn');
+          item.obj.destroy();
+        });
+      });
+    }
   },
 });
 

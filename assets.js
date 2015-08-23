@@ -52,5 +52,12 @@ var ASSETS = {
         arrow_start: [0, 0],
       },
     },
+    'fire.png': {
+      tile: 80,
+      tileh: 80,
+      map: {
+        fire_start: [0, 0],
+      },
+    },
   },
 };
