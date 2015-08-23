@@ -41,7 +41,6 @@ Crafty.c('Spawner', {
     this.bind('EnterFrame', function() {
       if (this.nextX <= -Crafty.viewport.x + W) {
         var levelNumber = Math.floor(this.nextX / 10000);
-        levelNumber = 4;
         var level = LEVELS[levelNumber] || LEVELS[LEVELS.length - 1];
         var type = weightedRandom(level);
         switch (type) {
@@ -102,6 +101,11 @@ Crafty.c('Input', {
         e.preventDefault();
       } else if (e.keyCode == 32) {
         this.fire(true);
+        e.preventDefault();
+      }
+      // DEBUG
+      if (e.keyCode == 72) {
+        this.heal(100);
         e.preventDefault();
       }
     }.bind(this);
@@ -186,11 +190,14 @@ Crafty.defineScene('game', function() {
   dragon.bind('Die', function() {
     Crafty('Spawner').destroy();
     Crafty.e('Delay').delay(function() {
-      Crafty.e('GameOver, AnyKey')
+      Crafty.e('GameOver');
+    }, 1000);
+    Crafty.e('Delay').delay(function() {
+      Crafty.e('AnyKey')
         .bind('AnyKey', function() {
           Crafty.enterScene('game');
         });
-    }, 1000);
+    }, 2000);
   });
 
   Crafty.e('GroundManager');

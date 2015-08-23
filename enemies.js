@@ -60,15 +60,26 @@ Crafty.c('Arrow', {
     //this.attr({w: 6, h: 6}).color('#ff00ff');
 
     this.flying = false;
+    this.falling = false;
 
     this.bind('EnterFrame', function() {
       if (!this.flying) return;
-      this.vy += ARROW_G;
-      this.rotation = atan2(-this.vy, -this.vx);
+      if (this.falling) {
+        this.vy += G;
+        var r = ((this.rotation % 360) + 360) % 360;
+        if (90 < r && r < 270) {
+          this.rotation += 1;
+        } else {
+          this.rotation -= 1;
+        }
+      } else {
+        this.vy += ARROW_G;
+        this.rotation = atan2(-this.vy, -this.vx);
+      }
     });
 
     this.onHit('Dragon', function(e) {
-      if (!this.flying) return;
+      if (!this.flying || this.falling) return;
       for (var i = 0; i < e.length; i++) {
         var item = e[i];
         if (item.type != 'SAT') continue;
@@ -82,6 +93,7 @@ Crafty.c('Arrow', {
         this.vy = 0;
         this.flying = false;
         item.obj.attach(this);
+        dragon.arrows.push(this);
 
         break;
       }
@@ -89,6 +101,7 @@ Crafty.c('Arrow', {
 
     this.onHit('Ground', function(e) {
       this.flying = false;
+      this.falling = false;
     });
 
     this.bind('Burn', function() {
@@ -102,6 +115,14 @@ Crafty.c('Arrow', {
     this.vy = -sin(this.rotation) * ARROW_SPEED;
     this.flying = true;
     return this;
+  },
+
+  fall: function(vx, vy) {
+    this.flying = true;
+    this.falling = true;
+    this._parent.detach(this);
+    this.vx = vx;
+    this.vy = vy + 1;
   },
 });
 

@@ -14,6 +14,7 @@ Crafty.c('DragonCore', {
     this.fireCooldown = 0;
     this.dragon = this;
     this.health = 100;
+    this.arrows = [];
 
     var data = [
       [0, 12, 23, 27],
@@ -186,6 +187,12 @@ Crafty.c('DragonCore', {
   heal: function(health) {
     this.health += health;
     if (this.health > 100) this.health = 100;
+    while (health > 10) {
+      health -= 10;
+      var arrow = this.arrows.shift();
+      if (!arrow) continue;
+      arrow.fall(this.vx, this.vy);
+    }
   },
 });
 
