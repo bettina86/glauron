@@ -28,7 +28,11 @@ Crafty.c('GroundManager', {
               [SKIRT_WIDTH, SKIRT_HEIGHT],
               [SKIRT_WIDTH + SEGMENT_WIDTH, SKIRT_HEIGHT],
               [SKIRT_WIDTH + SEGMENT_WIDTH + SKIRT_WIDTH, 2 * SKIRT_HEIGHT]);
-        segment.rotation = clamp(-40, 40, 0.5 * prevRotation + randFloat(-30, 30));
+        var bias = 2 * (0.5 - (prevY + SKIRT_HEIGHT - GROUND_MIN_Y) / (GROUND_MAX_Y - GROUND_MIN_Y));
+        bias *= bias * bias;
+        var delta = -0.5 * prevRotation + 10 * bias + randFloat(-30, 30);
+        delta = clamp(-40, 40, delta);
+        segment.rotation = clamp(-40, 40, prevRotation + delta);
         if (prevY + SKIRT_HEIGHT > GROUND_MAX_Y && segment.rotation > 0) {
           segment.rotation = 0;
         } else if (prevY + SKIRT_HEIGHT < GROUND_MIN_Y && segment.rotation < 0) {
