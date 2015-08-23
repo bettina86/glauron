@@ -44,6 +44,7 @@ Crafty.c('Archer', {
 
     this.one('Burn', function() {
       Crafty('Stats').archersKilled++;
+      Crafty.audio.play('archer', 1, 0.5);
     });
 
     this.bind('Remove', function() {
@@ -108,6 +109,7 @@ Crafty.c('Arrow', {
 
     this.one('Burn', function() {
       Crafty('Stats').arrowsDestroyed++;
+      Crafty.audio.play('arrow', 1, 0.5);
     });
   },
 
@@ -116,6 +118,7 @@ Crafty.c('Arrow', {
     this.vx = -cos(this.rotation) * ARROW_SPEED;
     this.vy = -sin(this.rotation) * ARROW_SPEED;
     this.flying = true;
+    Crafty.audio.play('shoot', 1, 0.1);
     return this;
   },
 

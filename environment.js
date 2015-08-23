@@ -83,8 +83,10 @@ Crafty.c('House', {
       if (Math.random() < HEART_SPAWN_PROB) {
         Crafty.e('Heart')
           .attr({x: this.x + this.w/2, y: this.y + this.h/2});
+        Crafty.audio.play('heart', 1, 0.8);
       }
       Crafty('Stats').housesDestroyed++;
+      Crafty.audio.play('house', 1, 0.3);
     });
   },
 });

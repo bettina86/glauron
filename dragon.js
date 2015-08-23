@@ -16,6 +16,8 @@ Crafty.c('DragonCore', {
     this.health = 100;
     this.arrows = [];
 
+    Crafty.audio.play('start', 1, 0.5);
+
     var data = [
       [0, 12, 23, 27],
       [12, 24, 23, 27],
@@ -138,6 +140,7 @@ Crafty.c('DragonCore', {
               Crafty.e('Fire')
                 .velocity(this.vx, this.vy)
                 .fire(this.x + cos(this.rotation) * 0.7 * this.tail[0].pieceLength, this.y + sin(this.rotation) * 0.7 * this.tail[0].pieceLength, atan2(this.vy, this.vx), i);
+              Crafty.audio.play('fire', 1, 0.2);
             }
             this.fireCooldown = 5;
           }
@@ -159,6 +162,7 @@ Crafty.c('DragonCore', {
     if (this.flapCooldown > 0) return;
     this.flapTime = FLAP_TIME;
     this.flapCooldown = FLAP_INTERVAL;
+    Crafty.audio.play('flap', 1, 0.2);
     return this;
   },
 
@@ -178,7 +182,10 @@ Crafty.c('DragonCore', {
     if (this.health <= 0) {
       this.firing = false;
       this.removeComponent('Input');
+      Crafty.audio.play('die', 1, 0.5);
       this.trigger('Die');
+    } else {
+      Crafty.audio.play('hit', 1, 0.4);
     }
   },
 
@@ -186,6 +193,7 @@ Crafty.c('DragonCore', {
     if (this.isDead()) return;
     this.health += health;
     if (this.health > 100) this.health = 100;
+    Crafty.audio.play('heal', 1, 0.4);
     while (health >= 10) {
       health -= 10;
       var arrow = this.arrows.shift();

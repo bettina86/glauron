@@ -74,4 +74,17 @@ var ASSETS = {
       },
     }
   },
+  audio: {
+    archer: ['archer.wav'],
+    arrow: ['arrow.wav'],
+    die: ['die.wav'],
+    fire: ['fire.wav'],
+    flap: ['flap.wav'],
+    heal: ['heal.wav'],
+    heart: ['heart.wav'],
+    hit: ['hit.wav'],
+    house: ['house.wav'],
+    shoot: ['shoot.wav'],
+    start: ['start.wav'],
+  },
 };
