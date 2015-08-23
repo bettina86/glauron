@@ -53,15 +53,13 @@ Crafty.c('Archer', {
 Crafty.c('Arrow', {
   init: function() {
     this.requires('2D, Velocity, Collision, Burnable');
-    this.attr({w: 1, h: 1});
+    this.attr({w: 20, h: 4})
+      .origin(0, 2);
 
     //this.requires('Canvas, Color');
     //this.attr({w: 6, h: 6}).color('#ff00ff');
 
-    this.sprite = Crafty.e('2D, Canvas, Color')
-      .attr({x: 0, y: -2, w: 30, h: 4})
-      .origin(0, 2)
-      .color('#ff0000');
+    this.sprite = Crafty.e('2D, Canvas, arrow_start');
     this.attach(this.sprite);
 
     this.fired = false;

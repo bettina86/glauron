@@ -45,5 +45,12 @@ var ASSETS = {
         archer_bow: [1, 0],
       },
     },
+    'arrow.png': {
+      tile: 20,
+      tileh: 4,
+      map: {
+        arrow_start: [0, 0],
+      },
+    },
   },
 };
