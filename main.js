@@ -78,7 +78,7 @@ Crafty.c('Spawner', {
             }
             break;
         }
-        this.nextX += randFloat(300, W);
+        this.nextX += randFloat(300, 800);
       }
     });
   },
