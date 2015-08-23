@@ -8,7 +8,7 @@ Crafty.c('Spawner', {
       if (cooldown > 0) {
         cooldown--;
       } else {
-        if (Math.random() < 0.005) {
+        if (Math.random() < 0.05) {
           Crafty.e('Archer, SnapToGround, Despawn')
             .attr({x: -Crafty.viewport.x + W})
             .snapToGround();

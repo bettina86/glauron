@@ -15,7 +15,7 @@ var GROUND_Y = 650;
 var GROUND_MIN_Y = H / 3;
 var GROUND_MAX_Y = H - 100;
 
-var ARCHER_WIDTH = 10;
+var ARCHER_WIDTH = 20;
 var ARCHER_HEIGHT = 30;
 var ARROW_SPEED = 5;
 var ARROW_G = 0.01;

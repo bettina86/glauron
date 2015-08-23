@@ -37,5 +37,13 @@ var ASSETS = {
         house_start: [0, 0],
       },
     },
+    'archer.png': {
+      tile: 20,
+      tileh: 30,
+      map: {
+        archer_body: [0, 0],
+        archer_bow: [1, 0],
+      },
+    },
   },
 };
