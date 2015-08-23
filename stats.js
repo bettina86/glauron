@@ -18,7 +18,6 @@ Crafty.c('Stats', {
           this.multiplier = 1;
         }
       }
-      this.level = Math.max(this.level, Math.floor(this.distanceFlown / 50));
     });
   },
 

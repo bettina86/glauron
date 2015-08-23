@@ -3,6 +3,8 @@ Crafty.timer.FPS(60);
 
 var LEVELS = [
   {
+  },
+  {
     archer: 4,
     house: 4,
     village: 2,
@@ -39,20 +41,27 @@ var LEVELS = [
 Crafty.c('Spawner', {
   init: function() {
     this.nextX = 1.5 * W;
-    var lastLevel = -1;
+    var spawns = [];
 
     this.bind('EnterFrame', function() {
-      var levelNumber = Crafty('Stats').level;
-      if (levelNumber > lastLevel) {
-        lastLevel = levelNumber;
-        Crafty.e('LevelBar, Despawn')
-          .attr({x: -Crafty.viewport.x + W, y: 100})
-          .text('Level ' + (levelNumber + 1));
+      if (spawns.length == 0) {
+        var stats = Crafty('Stats');
+        stats.level++;
+        var level = LEVELS[stats.level] || LEVELS[LEVELS.length - 1];
+        for (var key in level) {
+          for (var i = 0; i < level[key]; i++) {
+            spawns.push(key);
+          }
+        }
+        shuffle(spawns);
+        spawns.push('levelbar');
       }
       if (this.nextX <= -Crafty.viewport.x + W) {
-        var level = LEVELS[levelNumber] || LEVELS[LEVELS.length - 1];
-        var type = weightedRandom(level);
+        var type = spawns.pop();
         switch (type) {
+          case 'levelbar':
+            Crafty.e('LevelBar, Despawn');
+            break;
           case 'archer':
             this.spawn('Archer');
             break;
@@ -105,10 +114,12 @@ Crafty.c('Spawner', {
 
 Crafty.c('LevelBar', {
   init: function() {
-    this.requires('2D, Canvas, Text');
+    this.requires('2D, Canvas, Text, Despawn');
     this
       .textColor('#ffffff')
-      .textFont({family: 'Bilbo', size: '64px', weight: 'bold'});
+      .textFont({family: 'Bilbo', size: '64px', weight: 'bold'})
+      .attr({x: -Crafty.viewport.x + W, y: 100, z: -5})
+      .text('Level ' + Crafty('Stats').level);
   },
 });
 
@@ -213,7 +224,7 @@ Crafty.c('GameOver', {
       .setElementContent('arrows-destroyed', stats.arrowsDestroyed)
       .setElementContent('houses-destroyed', stats.housesDestroyed)
       .setElementContent('distance-flown', stats.distanceFlown)
-      .setElementContent('level-reached', stats.level + 1)
+      .setElementContent('level-reached', stats.level)
       .setElementContent('highest-multiplier', stats.highestMultiplier)
       .setElementContent('score', stats.score);
   },

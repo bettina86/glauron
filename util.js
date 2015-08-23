@@ -57,3 +57,12 @@ function weightedRandom(map) {
     }
   }
 }
+
+function shuffle(array) {
+  for (var i = 0; i < array.length; i++) {
+    var j = i + randInt(array.length - i);
+    var tmp = array[i];
+    array[i] = array[j];
+    array[j] = tmp;
+  }
+}
