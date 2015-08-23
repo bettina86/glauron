@@ -109,7 +109,7 @@ Crafty.defineScene('loading', function() {
 Crafty.defineScene('game', function() {
   Crafty('*').destroy();
 
-  Crafty.background('#333333');
+  Crafty.background('#aaaaaa');
 
   Crafty.e('Stats');
 

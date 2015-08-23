@@ -52,40 +52,43 @@ Crafty.c('Archer', {
 
 Crafty.c('Arrow', {
   init: function() {
-    this.requires('2D, Velocity, Collision, Burnable');
-    this.attr({w: 20, h: 4})
+    this.requires('2D, Velocity, Canvas, arrow_start, Collision, Burnable, Despawn');
+    this
       .origin(0, 2);
 
     //this.requires('Canvas, Color');
     //this.attr({w: 6, h: 6}).color('#ff00ff');
 
-    this.sprite = Crafty.e('2D, Canvas, arrow_start');
-    this.attach(this.sprite);
-
-    this.fired = false;
+    this.flying = false;
 
     this.bind('EnterFrame', function() {
-      if (!this.fired) return;
+      if (!this.flying) return;
       this.vy += ARROW_G;
       this.rotation = atan2(-this.vy, -this.vx);
     });
 
     this.onHit('Dragon', function(e) {
+      if (!this.flying) return;
       for (var i = 0; i < e.length; i++) {
         var item = e[i];
-        if (item.type == 'MBR') continue;
+        if (item.type != 'SAT') continue;
         var dragon = item.obj.dragon;
         if (!dragon) continue;
+
+        this.x += this.vx;
+        this.y += this.vy;
         dragon.takeDamage(10);
-        item.obj.attach(this.sprite);
-        this.destroy();
+        this.vx = 0;
+        this.vy = 0;
+        this.flying = false;
+        item.obj.attach(this);
+
         break;
       }
     });
 
     this.onHit('Ground', function(e) {
-      e[0].obj.attach(this.sprite);
-      this.destroy();
+      this.flying = false;
     });
 
     this.bind('Burn', function() {
@@ -94,10 +97,10 @@ Crafty.c('Arrow', {
   },
 
   fire: function() {
-    if (this.fired) return this;
+    if (this.flying) return this;
     this.vx = -cos(this.rotation) * ARROW_SPEED;
     this.vy = -sin(this.rotation) * ARROW_SPEED;
-    this.fired = true;
+    this.flying = true;
     return this;
   },
 });

@@ -17,8 +17,8 @@ Crafty.c('DragonCore', {
 
     var data = [
       [0, 12, 23, 27],
-      [12, 24, 24, 26],
-      [12, 24, 24, 26],
+      [12, 24, 23, 27],
+      [12, 24, 23, 27],
       [16, 26, 23, 27],
       [12, 26, 23, 27],
       [16, 28, 22, 28],
@@ -29,7 +29,7 @@ Crafty.c('DragonCore', {
       [10, 26, 20, 31],
       [10, 26, 20, 30],
       [10, 24, 21, 29],
-      [10, 36, 19, 32],
+      [10, 36, 21, 32],
     ];
     var d = 0;
     var dragon = this;
@@ -43,7 +43,7 @@ Crafty.c('DragonCore', {
       var piece = Crafty.e('2D, Canvas, dragon_start, Collision, Dragon')
         .sprite(data.length - 1 - i, 0)
         .origin(left, 25)
-        .collision([top, left], [top, right], [bottom, right], [bottom, left]);
+        .collision([left, top], [right, top], [right, bottom], [left, bottom]);
       piece.dragon = this;
       piece.leftPivot = left;
       piece.rightPivot = right;
