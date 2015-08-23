@@ -16,7 +16,7 @@ Crafty.c('Archer', {
       var dx = dragon.x - this.x;
       var dy = dragon.y - this.y;
       var d = length(dx, dy);
-      var distanceAdjustment = 0.02 * d;
+      var distanceAdjustment = 0.03 * d;
       fireAngle = atan2(dy, dx) + distanceAdjustment;
       bow.rotation = fireAngle - 180;
 

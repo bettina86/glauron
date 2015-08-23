@@ -1,26 +1,94 @@
 Crafty.init(W, H, document.getElementById('game'));
 Crafty.timer.FPS(60);
 
+var LEVELS = [
+  {
+    archer: 4,
+    house: 4,
+    village: 2,
+  },
+  {
+    archer: 3,
+    house: 3,
+    village: 2,
+    army: 2,
+  },
+  {
+    archer: 2,
+    house: 2,
+    village: 3,
+    army: 3,
+  },
+  {
+    archer: 1,
+    house: 1,
+    village: 3,
+    army: 3,
+    largeArmy: 2,
+  },
+  {
+    archer: 1,
+    village: 2,
+    army: 3,
+    largeArmy: 4,
+  }
+];
+
 Crafty.c('Spawner', {
   init: function() {
-    var cooldown = 0;
+    this.nextX = 1.5 * W;
+
     this.bind('EnterFrame', function() {
-      if (cooldown > 0) {
-        cooldown--;
-      } else {
-        if (Math.random() < 0.05) {
-          Crafty.e('Archer, SnapToGround, Despawn')
-            .attr({x: -Crafty.viewport.x + W})
-            .snapToGround();
-          cooldown = 60;
-        } else if (Math.random() < 0.01) {
-          Crafty.e('House, SnapToGround, Despawn')
-            .attr({x: -Crafty.viewport.x + W})
-            .snapToGround();
-          cooldown = 60;
+      if (this.nextX <= -Crafty.viewport.x + W) {
+        var levelNumber = Math.floor(this.nextX / 10000);
+        levelNumber = 4;
+        var level = LEVELS[levelNumber] || LEVELS[LEVELS.length - 1];
+        var type = weightedRandom(level);
+        switch (type) {
+          case 'archer':
+            this.spawn('Archer');
+            break;
+          case 'house':
+            this.spawn('House');
+            break;
+          case 'village':
+            for (var i = 1 + randInt(2); i > 0; i--) {
+              this.spawn('Archer', randFloat(30, 60));
+            }
+            for (var i = 2 + randInt(2); i > 0; i--) {
+              this.spawn('House', randFloat(20, 40));
+            }
+            for (var i = 1 + randInt(2); i > 0; i--) {
+              this.spawn('Archer', randFloat(30, 60));
+            }
+            break;
+          case 'army':
+            for (var i = 2 + randInt(2); i > 0; i--) {
+              for (var j = 2 + randInt(2); j > 0; j--) {
+                this.spawn('Archer', randFloat(20, 40));
+              }
+              this.nextX += randFloat(50, 100);
+            }
+            break;
+          case 'largeArmy':
+            for (var i = 2 + randInt(3); i > 0; i--) {
+              for (var j = 2 + randInt(3); j > 0; j--) {
+                this.spawn('Archer', randFloat(20, 30));
+              }
+              this.nextX += randFloat(80, 160);
+            }
+            break;
         }
+        this.nextX += randFloat(300, W);
       }
     });
+  },
+
+  spawn: function(type, advance) {
+    var entity = Crafty.e(type + ', SnapToGround, Despawn')
+      .attr({x: this.nextX})
+      .snapToGround();
+    this.nextX += entity.w + (advance || 0);
   },
 });
 

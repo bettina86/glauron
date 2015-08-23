@@ -5,8 +5,8 @@ Crafty.c('GroundManager', {
     var right = -W;
 
     this.bind('EnterFrame', function() {
-      var viewportLeft = -Crafty.viewport.x - W;
-      var viewportRight = left + 2 * W;
+      var viewportLeft = -Crafty.viewport.x - SEGMENT_WIDTH;
+      var viewportRight = -Crafty.viewport.x + 2 * W;
 
       while (left < viewportLeft && this.segments.length > 0) {
         var segment = this.segments.shift();
@@ -71,6 +71,7 @@ Crafty.c('SnapToGround', {
     var heightLeft = groundManager.heightAt(this.x);
     var heightRight = groundManager.heightAt(this.x + this.w);
     this.y = Math.max(heightLeft, heightRight) - this.h;
+    return this;
   },
 });
 
