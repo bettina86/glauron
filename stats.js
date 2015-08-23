@@ -3,6 +3,7 @@ Crafty.c('Stats', {
     this.archersKilled = 0;
     this.arrowsDestroyed = 0;
     this.housesDestroyed = 0;
+    this.churchesDestroyed = 0;
     this.heartsCollected = 0;
     this.distanceFlown = 0;
     this.highestMultiplier = 1;

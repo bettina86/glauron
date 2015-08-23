@@ -37,6 +37,13 @@ var ASSETS = {
         house_start: [0, 0],
       },
     },
+    'church.png': {
+      tile: 100,
+      tileh: 150,
+      map: {
+        church_start: [0, 0],
+      },
+    },
     'archer.png': {
       tile: 20,
       tileh: 30,

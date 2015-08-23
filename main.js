@@ -17,25 +17,52 @@ var LEVELS = [
     army: 2,
   },
   {
-    archer: 1,
     longbowman: 1,
     house: 2,
+    church: 1,
     village: 3,
     army: 3,
   },
   {
     longbowman: 1,
     house: 1,
-    village: 3,
-    army: 3,
+    church: 2,
+    village: 2,
+    army: 2,
     largeArmy: 2,
   },
   {
-    longbowman: 1,
-    village: 2,
+    church: 2,
+    village: 1,
+    city: 2,
+    army: 2,
+    largeArmy: 3,
+  },
+  {
+    church: 1,
+    city: 3,
+    army: 2,
+    largeArmy: 4,
+  },
+  {
+    church: 1,
+    city: 2,
     army: 3,
     largeArmy: 4,
-  }
+  },
+  {
+    city: 2,
+    army: 3,
+    largeArmy: 5,
+  },
+  {
+    city: 1,
+    army: 2,
+    largeArmy: 6,
+  },
+  {
+    largeArmy: 10,
+  },
 ];
 
 Crafty.c('Spawner', {
@@ -71,6 +98,9 @@ Crafty.c('Spawner', {
           case 'house':
             this.spawn('House');
             break;
+          case 'church':
+            this.spawn('Church');
+            break;
           case 'village':
             for (var i = 1 + randInt(2); i > 0; i--) {
               this.spawn(Math.random() < 0.05 ? 'Longbowman' : 'Archer', randFloat(30, 60));
@@ -79,6 +109,17 @@ Crafty.c('Spawner', {
               this.spawn('House', randFloat(20, 40));
             }
             for (var i = 1 + randInt(2); i > 0; i--) {
+              this.spawn(Math.random() < 0.05 ? 'Longbowman' : 'Archer', randFloat(30, 60));
+            }
+            break;
+          case 'city':
+            for (var i = 2 + randInt(2); i > 0; i--) {
+              this.spawn(Math.random() < 0.05 ? 'Longbowman' : 'Archer', randFloat(30, 60));
+            }
+            for (var i = 2 + randInt(2); i > 0; i--) {
+              this.spawn(i == 1 ? 'Church' : 'House', randFloat(20, 40));
+            }
+            for (var i = 2 + randInt(2); i > 0; i--) {
               this.spawn(Math.random() < 0.05 ? 'Longbowman' : 'Archer', randFloat(30, 60));
             }
             break;
@@ -223,6 +264,7 @@ Crafty.c('GameOver', {
       .setElementContent('archers-killed', stats.archersKilled)
       .setElementContent('arrows-destroyed', stats.arrowsDestroyed)
       .setElementContent('houses-destroyed', stats.housesDestroyed)
+      .setElementContent('churches-destroyed', stats.churchesDestroyed)
       .setElementContent('distance-flown', stats.distanceFlown)
       .setElementContent('level-reached', stats.level)
       .setElementContent('highest-multiplier', stats.highestMultiplier)
