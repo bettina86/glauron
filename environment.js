@@ -20,7 +20,7 @@ Crafty.c('GroundManager', {
         var prevRotation = prevSegment ? prevSegment.rotation : 0;
 
         var segment = Crafty.e('2D, Canvas, ground_start, Collision, Ground')
-          .attr({x: right - SKIRT_WIDTH, y: prevY, z: -1})
+          .attr({x: right - SKIRT_WIDTH, y: prevY, z: 1})
           .origin(SKIRT_WIDTH, SKIRT_HEIGHT)
           .sprite(0, randInt(3))
           .collision(
@@ -37,7 +37,7 @@ Crafty.c('GroundManager', {
 
         var bottomY = Math.max(prevY, prevY + SEGMENT_WIDTH * sin(segment.rotation)) + SKIRT_HEIGHT;
         var bottom = Crafty.e('2D, Canvas, Color, Collision, Ground')
-          .attr({x: right, y: bottomY, w: SEGMENT_WIDTH * cos(segment.rotation) + 1, h: H - bottomY, z: -1})
+          .attr({x: right, y: bottomY, w: SEGMENT_WIDTH * cos(segment.rotation) + 1, h: H - bottomY, z: 1})
           .color('#000');
         segment.bind('Remove', (function(bottom) {
           return function() {

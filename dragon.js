@@ -70,6 +70,9 @@ Crafty.c('DragonCore', {
         this.vy -= FLAP_SPEED / FLAP_TIME;
         this.flapTime--;
       }
+      if (this.isDead()) {
+        this.vx = Math.max(0, this.vx - 0.02);
+      }
       this.rotation = atan2(this.vy, this.vx);
 
       this.tail[0].attr({
@@ -175,7 +178,6 @@ Crafty.c('DragonCore', {
     if (this.health < 0) this.health = 0;
     if (this.health <= 0) {
       this.firing = false;
-      this.vx = 0;
       this.removeComponent('Input');
       this.trigger('Die');
     }
