@@ -2,38 +2,21 @@
 <html>
   <head>
     <title>Glauron</title>
+    <link href="http://fonts.googleapis.com/css?family=Bilbo" rel="stylesheet">
     <style>
-      @font-face {
-        font-family: "EG Dragon Caps";
-        src: url(EG_Dragon_Caps.ttf);
-      }
       * {
         box-sizing: border-box;
       }
       html {
         background: #080808;
         color: #fff;
-        font-family: 'EG Dragon Caps', sans-serif;
-        font-size: 16px;
-      }
-      #game {
-        margin: 20px auto;
-      }
-      dl {
-        color: #888;
-        width: 820px;
-        margin: 0 auto;
-      }
-      dt {
-        float: left;
-        width: 400px;
-        text-align: right;
-      }
-      dd {
-        margin-left: 420px;
+        font-family: 'Bilbo', serif;
+        font-size: 32px;
       }
       #container {
         position: relative;
+        width: 1200px;
+        margin: 20px auto;
       }
       .overlay {
         position: absolute;
@@ -43,6 +26,7 @@
         bottom: 0;
         text-shadow: 0 0 6px #000;
         text-align: center;
+        background-image: url(overlay.png);
       }
       .game-over {
         text-align: left;
@@ -68,15 +52,48 @@
         border-top: 1px solid #fff;
       }
       .any-key {
-        margin-top: 50px;
+        position: absolute;
+        bottom: 50px;
+        left: 0;
+        right: 0;
         color: #ddd;
+      }
+      .dimmed {
+        color: #bbb;
+      }
+      .background {
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url(background.png);
+      }
+      .hidable {
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.3s linear, visibility 0.3s linear;
+      }
+      .visible {
+        visibility: visible;
+        opacity: 1;
+        transition: opacity 0.3s linear, visibility 0.3s linear;
       }
     </style>
   </head>
   <body>
     <div id="container">
+      <div class="background"></div>
       <div id="game"></div>
-      <div id="game-over" class="overlay" style="display: none">
+      <div id="loading" class="hidable overlay">
+        <h1>Glauron, son of Glaurung<br>First of the Winged Dragons</h1>
+        <p class="dimmed">
+          Up / left mouse button &mdash; Flap wings<br>
+          Space / right mouse button &mdash; Breathe fire
+        </p>
+        <p class="any-key" id="loading-text">Loading...</p>
+      </div>
+      <div id="game-over" class="hidable overlay">
         <h1>Glauron was slain!</h1>
         <div class="game-over">
           <table>
@@ -116,12 +133,6 @@
         </p>
       </div>
     </div>
-    <dl>
-      <dt>up / left mouse button</dt>
-      <dd>flap wings</dd>
-      <dt>space / right mouse button</dt>
-      <dd>breathe fire</dd>
-    </dl>
     <script src="crafty-min.js"></script>
     <script src="util.js"></script>
     <script src="core.js"></script>

@@ -172,9 +172,7 @@ Crafty.c('DragonCore', {
   },
 
   takeDamage: function(damage) {
-    if (this.isDead()) {
-      return;
-    }
+    if (this.isDead()) return;
     this.health -= damage;
     if (this.health < 0) this.health = 0;
     if (this.health <= 0) {
@@ -185,9 +183,10 @@ Crafty.c('DragonCore', {
   },
 
   heal: function(health) {
+    if (this.isDead()) return;
     this.health += health;
     if (this.health > 100) this.health = 100;
-    while (health > 10) {
+    while (health >= 10) {
       health -= 10;
       var arrow = this.arrows.shift();
       if (!arrow) continue;

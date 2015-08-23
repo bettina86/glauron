@@ -166,22 +166,13 @@ Crafty.c('Stats', {
   },
 });
 
-Crafty.defineScene('loading', function() {
-  Crafty.background('#000');
-
-  var text = Crafty.e('2D, DOM, Text')
-    .text('Loading...')
-    .textColor('#ffffff')
-    .textFont({family: 'EG Dragon Caps', size: '60px'});
-  var w = 446;
-  var h = 138;
-  text.attr({x: (W - w) / 2, y: (H - h) / 2});
+Crafty.defineScene('intro', function() {
+  Crafty.e('StaticDom')
+    .bindElementVisibility('loading');
 });
 
 Crafty.defineScene('game', function() {
   Crafty('*').destroy();
-
-  Crafty.background('#aaaaaa');
 
   Crafty.e('Stats');
 
@@ -204,7 +195,7 @@ Crafty.defineScene('game', function() {
 
   Crafty.e('Spawner');
 
-  Crafty.e('Hud')
+  Crafty.e('Fixed')
     .attach(Crafty.e('HealthBar').attr({x: 5, y: 5}))
     .attach(Crafty.e('FireBar').attr({x: W - FIRE_AMOUNT - 5, y: 10}));
 });
@@ -251,7 +242,11 @@ Crafty.c('AnyKey', {
   },
 });
 
-Crafty.enterScene('loading');
+Crafty.enterScene('intro');
 Crafty.load(ASSETS, function() {
-  Crafty.enterScene('game');
+  Crafty.e('AnyKey, StaticDom, Delay')
+    .bind('AnyKey', function() {
+      Crafty.enterScene('game');
+    })
+    .setElementContent('loading-text', 'Click or press space to start');
 });

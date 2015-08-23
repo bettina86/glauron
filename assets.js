@@ -66,5 +66,12 @@ var ASSETS = {
         smoke_start: [0, 0],
       },
     },
+    'background.png': {
+      tile: 1200,
+      tileh: 800,
+      map: {
+        background_start: [0, 0],
+      },
+    }
   },
 };

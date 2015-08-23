@@ -1,12 +1,3 @@
-Crafty.c('Hud', {
-  init: function() {
-    this.requires('2D');
-    this.bind('EnterFrame', function() {
-      this.x = -Crafty.viewport.x;
-    });
-  },
-});
-
 Crafty.c('HealthBar', {
   init: function() {
     this.requires('2D');

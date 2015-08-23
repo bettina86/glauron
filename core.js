@@ -72,10 +72,10 @@ Crafty.c('FollowedByCamera', {
 Crafty.c('StaticDom', {
   bindElementVisibility: function(id) {
     this.element = document.getElementById(id);
-    this.element.style.display = 'block';
+    this.element.classList.add('visible');
 
     this.bind('Remove', function() {
-      this.element.style.display = 'none';
+      this.element.classList.remove('visible');
     });
 
     return this;
@@ -85,5 +85,14 @@ Crafty.c('StaticDom', {
     var element = document.getElementById(id);
     element.innerText = content;
     return this;
+  },
+});
+
+Crafty.c('Fixed', {
+  init: function() {
+    this.requires('2D');
+    this.bind('EnterFrame', function() {
+      this.x = -Crafty.viewport.x;
+    });
   },
 });
