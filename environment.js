@@ -76,11 +76,7 @@ Crafty.c('SnapToGround', {
 
 Crafty.c('House', {
   init: function() {
-    this.requires('2D, Canvas, Color, Collision, Burnable');
-    
-    this
-      .attr({w: HOUSE_WIDTH, h: HOUSE_HEIGHT})
-      .color('#dddddd');
+    this.requires('2D, Canvas, house_start, Collision, Burnable');
 
     this.bind('Burn', function() {
       if (Math.random() < HEART_SPAWN_PROB) {

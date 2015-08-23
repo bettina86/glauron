@@ -30,5 +30,12 @@ var ASSETS = {
         wing_start: [0, 0],
       },
     },
+    'house.png': {
+      tile: 50,
+      tileh: 50,
+      map: {
+        house_start: [0, 0],
+      },
+    },
   },
 };
