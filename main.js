@@ -243,10 +243,35 @@ Crafty.c('AnyKey', {
 });
 
 Crafty.enterScene('intro');
-Crafty.load(ASSETS, function() {
+
+var thingsLoading = 0;
+
+Crafty.load(ASSETS, doneLoading);
+thingsLoading++;
+
+for (var key in SOUNDS) {
+  SOUNDS[key] = new Howl({
+    urls: SOUNDS[key],
+    onload: loadedOne,
+    onloaderror: loadedOne,
+  });
+  thingsLoading++;
+}
+
+Crafty.audio.play = function(name, times, volume) {
+  SOUNDS[name].volume = volume;
+  SOUNDS[name].play();
+}
+
+function loadedOne() {
+  thingsLoading--;
+  if (!thingsLoading) doneLoading();
+}
+    
+function doneLoading() {
   Crafty.e('AnyKey, StaticDom, Delay')
     .bind('AnyKey', function() {
       Crafty.enterScene('game');
     })
     .setElementContent('loading-text', 'Click or press space to start');
-});
+}
