@@ -121,7 +121,8 @@ Crafty.c('DragonCore', {
         parent.x = 0;
         parent.y = 0;
         parent.rotation = 0;
-        wing.attr({h: wingHeight, y: 25 - wingHeight})
+        wing.sprite(wingHeight < 0 ? 1 : 0, 0);
+        wing.attr({h: Math.abs(wingHeight), y: 25 - Math.max(0, wingHeight)})
         parent.x = parentX;
         parent.y = parentY;
         parent.rotation = parentRotation;
