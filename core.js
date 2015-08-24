@@ -83,7 +83,7 @@ Crafty.c('StaticDom', {
 
   setElementContent: function(id, content) {
     var element = document.getElementById(id);
-    element.innerText = content;
+    element.textContent = content;
     return this;
   },
 });

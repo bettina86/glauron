@@ -1,6 +1,3 @@
-Crafty.init(W, H, document.getElementById('game'));
-Crafty.timer.FPS(60);
-
 var LEVELS = [
   {
   },
@@ -297,41 +294,47 @@ Crafty.c('AnyKey', {
   },
 });
 
-Crafty.enterScene('intro');
+document.addEventListener('DOMContentLoaded', function() {
+  Crafty.init(W, H, document.getElementById('game'));
+  Crafty.timer.FPS(60);
 
-var thingsLoading = 0;
+  Crafty.enterScene('intro');
 
-Crafty.load(ASSETS, doneLoading);
-thingsLoading++;
+  var thingsLoading = 0;
 
-for (var key in SOUNDS) {
-  var sound = SOUNDS[key];
-  SOUNDS[key] = new Howl({
-    urls: [key + '.wav'],
-    onload: loadedOne,
-    onloaderror: loadedOne,
-    volume: sound.volume,
-  });
+  Crafty.load(ASSETS, loadedOne.bind(null, 'Crafty assets'));
   thingsLoading++;
-}
 
-function loadedOne() {
-  thingsLoading--;
-  if (!thingsLoading) doneLoading();
-}
-    
-function doneLoading() {
-  Crafty.e('AnyKey, StaticDom, Delay')
-    .bind('AnyKey', function() {
-      Crafty.enterScene('game');
-    })
-    .setElementContent('loading-text', 'Click or press space to start');
-}
+  for (var key in SOUNDS) {
+    var sound = SOUNDS[key];
+    SOUNDS[key] = new Howl({
+      urls: [key + '.ogg', key + '.mp3'],
+      onload: loadedOne.bind(null ,key),
+      onloaderror: loadedOne.bind(null ,key),
+      volume: sound.volume,
+    });
+    thingsLoading++;
+  }
 
-window.addEventListener('focus', function() {
-  Crafty.pause(false);
-});
+  function loadedOne(what) {
+    thingsLoading--;
+    // console.log('Loaded ' + what);
+    if (!thingsLoading) doneLoading();
+  }
+      
+  function doneLoading() {
+    Crafty.e('AnyKey, StaticDom, Delay')
+      .bind('AnyKey', function() {
+        Crafty.enterScene('game');
+      })
+      .setElementContent('loading-text', 'Click or press space to start');
+  }
 
-window.addEventListener('blur', function() {
-  Crafty.pause(true);
+  window.addEventListener('focus', function() {
+    Crafty.pause(false);
+  });
+
+  window.addEventListener('blur', function() {
+    Crafty.pause(true);
+  });
 });

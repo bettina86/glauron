@@ -7,6 +7,7 @@ Makefile
 .*
 *_data
 *.mmp
+*.wav
 screenshots
 src
 typings
