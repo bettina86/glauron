@@ -22,7 +22,7 @@ Crafty.c('GroundManager', {
         var segment = Crafty.e('2D, Canvas, ground_start, Collision, Ground')
           .attr({x: right - SKIRT_WIDTH, y: prevY, z: 1})
           .origin(SKIRT_WIDTH, SKIRT_HEIGHT)
-          .sprite(0, randInt(3))
+          .sprite(randInt(3), 0)
           .collision(
               [0, 2 * SKIRT_HEIGHT],
               [SKIRT_WIDTH, SKIRT_HEIGHT],
