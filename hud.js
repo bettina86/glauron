@@ -73,7 +73,7 @@ Crafty.c('FireBar', {
   },
 });
 
-Crafty.c('TopLeft', {
+Crafty.c('Left', {
   init: function() {
     this.requires('2D');
     this.bind('EnterFrame', function() {
@@ -82,7 +82,7 @@ Crafty.c('TopLeft', {
   },
 });
 
-Crafty.c('TopCenter', {
+Crafty.c('Center', {
   init: function() {
     this.requires('2D');
     this.bind('EnterFrame', function() {
@@ -91,7 +91,7 @@ Crafty.c('TopCenter', {
   },
 });
 
-Crafty.c('TopRight', {
+Crafty.c('Right', {
   init: function() {
     this.requires('2D');
     this.bind('EnterFrame', function() {

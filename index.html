@@ -8,7 +8,11 @@
       * {
         box-sizing: border-box;
       }
-      html {
+      html, body {
+        margin: 0;
+        padding: 0;
+      }
+      body {
         background: #080808;
         color: #fff;
         font-family: 'Bilbo', serif;
@@ -16,8 +20,7 @@
       }
       #container {
         position: relative;
-        width: 1200px;
-        margin: 20px auto;
+        margin: 0 auto;
       }
       .overlay {
         position: absolute;
@@ -28,6 +31,7 @@
         text-shadow: 0 0 6px #000;
         text-align: center;
         background-image: url(overlay.png);
+        background-size: 100% 100%;
       }
       .game-over {
         text-align: left;
@@ -69,6 +73,8 @@
         right: 0;
         bottom: 0;
         background-image: url(background.png);
+        background-size: auto 100%;
+        background-position: center;
       }
       .hidable {
         visibility: hidden;
@@ -154,9 +160,6 @@
         </p>
       </div>
     </div>
-    <footer>
-      Glauron is an <a href="http://www.ludumdare.com/compo/ludum-dare-33/?action=preview&uid=7882">entry</a> for the <a href="http://ludumdare.com/compo/">Ludum Dare</a> <a href="http://www.ludumdare.com/compo/ludum-dare-33/">33</a> Compo by <a href="http://twitter.com/frozenfractal">@frozenfractal</a>.
-    </footer>
     <script src="crafty-min.js"></script>
     <script src="howler.min.js"></script>
     <script src="util.js"></script>

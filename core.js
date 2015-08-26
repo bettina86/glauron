@@ -1,4 +1,4 @@
-var W = 1200; // The *maximum* width that is visible.
+var W = 1600; // The *maximum* width that is visible.
 var H = 800;
 
 var SEGMENT_WIDTH = 100;

@@ -247,9 +247,9 @@ Crafty.defineScene('game', function() {
 
   Crafty.e('Spawner');
 
-  Crafty.e('HealthBar, TopLeft').attr({y: 5});
-  Crafty.e('ScoreBar, TopCenter').attr({y: 0});
-  Crafty.e('FireBar, TopRight').attr({y: 10});
+  Crafty.e('HealthBar, Left').attr({y: 5});
+  Crafty.e('ScoreBar, Center').attr({y: 0});
+  Crafty.e('FireBar, Right').attr({y: 10});
 });
 
 Crafty.c('GameOver', {
@@ -296,8 +296,20 @@ Crafty.c('AnyKey', {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-  Crafty.init(W, H, document.getElementById('game'));
+  var container = document.getElementById('container');
+  Crafty.init(undefined, undefined, document.getElementById('game'));
   Crafty.timer.FPS(60);
+
+  var oldW = null;
+  var oldH = null;
+  Crafty.bind('EnterFrame', function() {
+    var w = window.innerWidth;
+    var h = window.innerHeight;
+    var scale = h / H;
+    if (Math.abs(Crafty.viewport._scale - scale) > 0.00001) {
+      Crafty.viewport.scale(scale);
+    }
+  });
 
   Crafty.enterScene('intro');
 
