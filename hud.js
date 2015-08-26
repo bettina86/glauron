@@ -52,22 +52,50 @@ Crafty.c('ScoreBar', {
     this.bind('EnterFrame', function() {
       var stats = Crafty('Stats');
       this.text('Score: ' + stats.score);
-      this.x = -Crafty.viewport.x + (W - this.w) / 2;
     });
   },
 });
 
 Crafty.c('FireBar', {
   init: function() {
-    this.requires('2D, Canvas, Color');
-    this
+    this.requires('2D');
+    this.w = FIRE_AMOUNT;
+    var bar = Crafty.e('2D, Canvas, Color')
       .attr({h: 10})
       .color('#ff8000');
+    this.attach(bar);
 
     this.bind('EnterFrame', function() {
       var dragon = Crafty('DragonCore');
       if (dragon.length == 0) return;
-      this.w = dragon.fireAmount;
+      bar.w = dragon.fireAmount;
+    });
+  },
+});
+
+Crafty.c('TopLeft', {
+  init: function() {
+    this.requires('2D');
+    this.bind('EnterFrame', function() {
+      this.x = -Crafty.viewport.x + 5;
+    });
+  },
+});
+
+Crafty.c('TopCenter', {
+  init: function() {
+    this.requires('2D');
+    this.bind('EnterFrame', function() {
+      this.x = -Crafty.viewport.x + 0.5 * (Crafty.viewport.width / Crafty.viewport._scale - this.w);
+    });
+  },
+});
+
+Crafty.c('TopRight', {
+  init: function() {
+    this.requires('2D');
+    this.bind('EnterFrame', function() {
+      this.x = -Crafty.viewport.x + Crafty.viewport.width / Crafty.viewport._scale - this.w - 5;
     });
   },
 });

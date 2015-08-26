@@ -1,4 +1,4 @@
-var W = 1200;
+var W = 1200; // The *maximum* width that is visible.
 var H = 800;
 
 var SEGMENT_WIDTH = 100;
@@ -85,15 +85,6 @@ Crafty.c('StaticDom', {
     var element = document.getElementById(id);
     element.textContent = content;
     return this;
-  },
-});
-
-Crafty.c('Fixed', {
-  init: function() {
-    this.requires('2D');
-    this.bind('EnterFrame', function() {
-      this.x = -Crafty.viewport.x;
-    });
   },
 });
 

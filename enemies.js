@@ -46,7 +46,7 @@ Crafty.c('Launcher', {
           this.attach(projectile);
           this.rotation = prevRot;
         }
-        if (dx <= 0 && dx >= -W && Math.random() < 0.01) {
+        if (dx <= 0 && dx >= -1200 && Math.random() < 0.01) {
           this.detach(projectile);
           projectile.fire();
           projectile = null;

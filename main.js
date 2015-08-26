@@ -64,7 +64,7 @@ var LEVELS = [
 
 Crafty.c('Spawner', {
   init: function() {
-    this.nextX = 1.5 * W;
+    this.nextX = W;
     var spawns = [];
 
     this.bind('EnterFrame', function() {
@@ -177,6 +177,8 @@ Crafty.c('Input', {
       if (e.keyCode == 72) {
         this.heal(100);
         e.preventDefault();
+      } else if (e.keyCode == 83) {
+        this.vx *= 2;
       }
     }.bind(this);
     var keyUpHandler = function(e) {
@@ -245,10 +247,9 @@ Crafty.defineScene('game', function() {
 
   Crafty.e('Spawner');
 
-  Crafty.e('Fixed')
-    .attach(Crafty.e('HealthBar').attr({x: 5, y: 5}))
-    .attach(Crafty.e('ScoreBar'))
-    .attach(Crafty.e('FireBar').attr({x: W - FIRE_AMOUNT - 5, y: 10}));
+  Crafty.e('HealthBar, TopLeft').attr({y: 5});
+  Crafty.e('ScoreBar, TopCenter').attr({y: 0});
+  Crafty.e('FireBar, TopRight').attr({y: 10});
 });
 
 Crafty.c('GameOver', {
