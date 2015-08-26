@@ -305,9 +305,24 @@ document.addEventListener('DOMContentLoaded', function() {
   Crafty.bind('EnterFrame', function() {
     var w = window.innerWidth;
     var h = window.innerHeight;
+    var blackBars = w > h * W / H;
+    if (blackBars) {
+      w = h * W / H;
+    }
     var scale = h / H;
-    if (Math.abs(Crafty.viewport._scale - scale) > 0.00001) {
+    if (Math.abs(Crafty.viewport._scale - scale) > 0.00001
+        || Crafty.viewport._width != oldW
+        || Crafty.viewport._height != oldH) {
+      Crafty.viewport.width = w;
+      Crafty.viewport.height = h;
       Crafty.viewport.scale(scale);
+      oldW = w;
+      oldH = h;
+      if (blackBars) {
+        container.style.width = Math.round(w) + 'px';
+      } else {
+        container.style.width = null;
+      }
     }
   });
 
