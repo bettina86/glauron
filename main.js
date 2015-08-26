@@ -204,16 +204,16 @@ Crafty.c('Input', {
       }
     }.bind(this);
 
-    document.addEventListener('keydown', keyDownHandler);
-    document.addEventListener('keyup', keyUpHandler);
-    document.addEventListener('mousedown', mouseDownHandler);
-    document.addEventListener('mouseup', mouseUpHandler);
+    container.addEventListener('keydown', keyDownHandler);
+    container.addEventListener('keyup', keyUpHandler);
+    container.addEventListener('mousedown', mouseDownHandler);
+    container.addEventListener('mouseup', mouseUpHandler);
 
     this.bind('Remove', function() {
-      document.removeEventListener('keydown', keyDownHandler);
-      document.removeEventListener('keyup', keyUpHandler);
-      document.removeEventListener('mousedown', mouseDownHandler);
-      document.removeEventListener('mouseup', mouseUpHandler);
+      container.removeEventListener('keydown', keyDownHandler);
+      container.removeEventListener('keyup', keyUpHandler);
+      container.removeEventListener('mousedown', mouseDownHandler);
+      container.removeEventListener('mouseup', mouseUpHandler);
     });
   },
 });
@@ -272,12 +272,6 @@ Crafty.c('GameOver', {
 
 Crafty.c('AnyKey', {
   init: function() {
-    var keyDownHandler = function(e) {
-      if (e.keyCode != 32) return;
-      this.trigger('AnyKey');
-      e.preventDefault();
-    }.bind(this);
-
     var mouseDownHandler = function(e) {
       if (e.button != 0) return;
       if (e.target.tagName == 'A') return;
@@ -285,24 +279,25 @@ Crafty.c('AnyKey', {
       e.preventDefault();
     }.bind(this);
 
-    document.addEventListener('keydown', keyDownHandler);
-    document.addEventListener('mousedown', mouseDownHandler);
+    container.addEventListener('mousedown', mouseDownHandler);
     
     this.bind('Remove', function() {
-      document.removeEventListener('keydown', keyDownHandler);
-      document.removeEventListener('mousedown', mouseDownHandler);
+      container.removeEventListener('mousedown', mouseDownHandler);
     });
   },
 });
 
+var container = null;
+
 document.addEventListener('DOMContentLoaded', function() {
-  var container = document.getElementById('container');
+  container = document.getElementById('container');
   Crafty.init(undefined, undefined, document.getElementById('game'));
   Crafty.timer.FPS(60);
 
   var oldW = null;
   var oldH = null;
   Crafty.bind('EnterFrame', function() {
+    container.focus();
     var w = window.innerWidth;
     var h = window.innerHeight;
     var blackBars = w > h * W / H;
@@ -356,7 +351,7 @@ document.addEventListener('DOMContentLoaded', function() {
       .bind('AnyKey', function() {
         Crafty.enterScene('game');
       })
-      .setElementContent('loading-text', 'Click or press space to start');
+      .setElementContent('loading-text', 'Click to start');
   }
 
   window.addEventListener('focus', function() {
