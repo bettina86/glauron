@@ -323,6 +323,7 @@ document.addEventListener('DOMContentLoaded', function() {
       } else {
         container.style.width = null;
       }
+      document.getElementsByTagName('html')[0].style.fontSize = Math.round(62.5 * scale) + '%';
     }
   });
 

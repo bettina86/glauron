@@ -11,12 +11,13 @@
       html, body {
         margin: 0;
         padding: 0;
+        font-size: 62.5%;
       }
       body {
         background: #000;
         color: #fff;
         font-family: 'Bilbo', serif;
-        font-size: 32px;
+        font-size: 3.2rem;
       }
       #container {
         position: relative;
@@ -28,7 +29,7 @@
         top: 0;
         right: 0;
         bottom: 0;
-        text-shadow: 0 0 6px #000;
+        text-shadow: 0 0 0.6rem #000;
         text-align: center;
         background-image: url(overlay.png);
         background-size: 100% 100%;
@@ -44,21 +45,21 @@
       h1 {
         font-weight: normal;
         font-size: 200%;
-        margin: 100px 0 50px;
+        margin: 10rem 0 5rem;
         text-align: center;
+      }
+      .title {
+        font-size: 300%;
       }
       table {
         border-collapse: collapse;
       }
       td {
-        padding: 0 10px;
-      }
-      tfoot td {
-        border-top: 1px solid #fff;
+        padding: 0 1rem;
       }
       .any-key {
         position: absolute;
-        bottom: 50px;
+        bottom: 5rem;
         left: 0;
         right: 0;
         color: #ddd;
@@ -93,7 +94,7 @@
         margin: 0;
         font-family: serif;
         text-align: center;
-        font-size: 16px;
+        font-size: 1.6rem;
         color: #555;
       }
       footer a {
@@ -112,7 +113,7 @@
       <div class="background"></div>
       <div id="game"></div>
       <div id="loading" class="hidable overlay">
-        <h1>Glauron, son of Glaurung<br>First of the Winged Dragons</h1>
+        <h1 class="title">Glauron, son of Glaurung<br>First of the Winged Dragons</h1>
         <p class="dimmed">
           Up / left mouse button &mdash; Flap wings<br>
           Space / right mouse button &mdash; Breathe fire
