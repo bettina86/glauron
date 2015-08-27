@@ -189,7 +189,6 @@ Crafty.c('Input', {
     }.bind(this);
 
     var mouseDownHandler = function(e) {
-      console.log('mousedown', e);
       if (e.button == 0) {
         this.flap();
         e.preventDefault();
@@ -207,11 +206,10 @@ Crafty.c('Input', {
 
     var fireTouchId = null;
     var touchStartHandler = function(e) {
-      console.log('touchstart', e);
       e.preventDefault();
       for (var i = 0; i < e.changedTouches.length; i++) {
         var touch = e.changedTouches[i];
-        if (touch.clientX < window.width / 2) {
+        if (touch.clientX < window.innerWidth / 2) {
           this.flap();
         } else {
           this.fire(true);
@@ -309,10 +307,18 @@ Crafty.c('AnyKey', {
       e.preventDefault();
     }.bind(this);
 
+    var touchDownHandler = function(e) {
+      if (e.target.tagName == 'A') return;
+      this.trigger('AnyKey');
+      e.preventDefault();
+    }.bind(this);
+
     container.addEventListener('mousedown', mouseDownHandler);
+    container.addEventListener('touchstart', touchDownHandler);
     
     this.bind('Remove', function() {
       container.removeEventListener('mousedown', mouseDownHandler);
+      container.removeEventListener('touchstart', touchDownHandler);
     });
   },
 });
@@ -323,6 +329,12 @@ document.addEventListener('DOMContentLoaded', function() {
   container = document.getElementById('container');
   Crafty.init(undefined, undefined, document.getElementById('game'));
   Crafty.timer.FPS(60);
+
+  Crafty.removeEvent(Crafty, Crafty.stage.elem, 'touchstart', Crafty.touchDispatch);
+  Crafty.removeEvent(Crafty, Crafty.stage.elem, 'touchmove', Crafty.touchDispatch);
+  Crafty.removeEvent(Crafty, Crafty.stage.elem, 'touchend', Crafty.touchDispatch);
+  Crafty.removeEvent(Crafty, Crafty.stage.elem, 'touchcancel', Crafty.touchDispatch);
+  Crafty.removeEvent(Crafty, Crafty.stage.elem, 'touchleave', Crafty.touchDispatch);
 
   var oldW = null;
   var oldH = null;
