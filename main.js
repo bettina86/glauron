@@ -188,7 +188,8 @@ Crafty.c('Input', {
       }
     }.bind(this);
 
-    var mouseDownHandler = function mouseDownHandler(e) {
+    var mouseDownHandler = function(e) {
+      console.log('mousedown', e);
       if (e.button == 0) {
         this.flap();
         e.preventDefault();
@@ -197,10 +198,35 @@ Crafty.c('Input', {
         e.preventDefault();
       }
     }.bind(this);
-    var mouseUpHandler = function mouseUpHandler(e) {
+    var mouseUpHandler = function(e) {
       if (e.button == 2) {
         this.fire(false);
         e.preventDefault();
+      }
+    }.bind(this);
+
+    var fireTouchId = null;
+    var touchStartHandler = function(e) {
+      console.log('touchstart', e);
+      e.preventDefault();
+      for (var i = 0; i < e.changedTouches.length; i++) {
+        var touch = e.changedTouches[i];
+        if (touch.clientX < window.width / 2) {
+          this.flap();
+        } else {
+          this.fire(true);
+          fireTouchId = touch.identifier;
+        }
+      }
+    }.bind(this);
+    var touchEndHandler = function(e) {
+      e.preventDefault();
+      for (var i = 0; i < e.changedTouches.length; i++) {
+        var touch = e.changedTouches[i];
+        if (touch.identifier === fireTouchId) {
+          this.fire(false);
+          fireTouchId = null;
+        }
       }
     }.bind(this);
 
@@ -208,12 +234,16 @@ Crafty.c('Input', {
     container.addEventListener('keyup', keyUpHandler);
     container.addEventListener('mousedown', mouseDownHandler);
     container.addEventListener('mouseup', mouseUpHandler);
+    container.addEventListener('touchstart', touchStartHandler);
+    container.addEventListener('touchend', touchEndHandler);
 
     this.bind('Remove', function() {
       container.removeEventListener('keydown', keyDownHandler);
       container.removeEventListener('keyup', keyUpHandler);
       container.removeEventListener('mousedown', mouseDownHandler);
       container.removeEventListener('mouseup', mouseUpHandler);
+      container.removeEventListener('touchstart', touchStartHandler);
+      container.removeEventListener('touchend', touchEndHandler);
     });
   },
 });

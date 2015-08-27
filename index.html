@@ -23,6 +23,7 @@
       #container {
         position: relative;
         margin: 0 auto;
+        outline: 0;
       }
       .overlay {
         position: absolute;
@@ -109,12 +110,12 @@
   <body>
     <div id="container" tabindex="0">
       <div class="background"></div>
-      <div id="game" tabindex="1"></div>
+      <div id="game"></div>
       <div id="loading" class="hidable overlay">
         <h1>Glauron, son of Glaurung<br>First of the Winged Dragons</h1>
         <p class="dimmed">
-          Up / left mouse button &mdash; Flap wings<br>
-          Space / right mouse button &mdash; Breathe fire
+          Up / left mouse button / tap left &mdash; Flap wings<br>
+          Space / right mouse button / tap right &mdash; Breathe fire
         </p>
         <p class="any-key" id="loading-text">Loading...</p>
       </div>
